@@ -1,7 +1,4 @@
 #include "Cygnus.dtsi"
-#include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/pointing.h>
-
 &default_transform {
     col-offset = <6>;
 };
@@ -17,106 +14,9 @@
 };
 
 / {
-    cygnus_gesture_processors {
-        cy_g6: cygnus_gesture_back_copy {
-            compatible = "cygnus,input-processor-gesture";
-            status = "okay";
-            #input-processor-cells = <0>;
-            tick = <18>;
-            wait-ms = <20>;
-            tap-ms = <20>;
-            bindings =
-                <&kp LG(V)>,
-                <&kp LG(C)>,
-                <&kp LG(A)>,
-                <&kp LG(R)>;
-        };
-
-        cy_g7: cygnus_gesture_forward_tabs {
-            compatible = "cygnus,input-processor-gesture";
-            status = "okay";
-            #input-processor-cells = <0>;
-            tick = <18>;
-            wait-ms = <20>;
-            tap-ms = <20>;
-            bindings =
-                <&kp LG(T)>,
-                <&kp LG(W)>,
-                <&kp LA(LG(UP_ARROW))>,
-                <&kp LA(LG(DOWN_ARROW))>;
-        };
-
-        cy_g8: cygnus_gesture_pan {
-            compatible = "cygnus,input-processor-gesture";
-            status = "okay";
-            #input-processor-cells = <0>;
-            tick = <12>;
-            wait-ms = <5>;
-            tap-ms = <5>;
-            bindings =
-                <&msc SCRL_RIGHT>,
-                <&msc SCRL_LEFT>,
-                <&msc SCRL_UP>,
-                <&msc SCRL_DOWN>;
-        };
-
-        cy_g9: cygnus_gesture_system {
-            compatible = "cygnus,input-processor-gesture";
-            status = "okay";
-            #input-processor-cells = <0>;
-            tick = <18>;
-            wait-ms = <20>;
-            tap-ms = <20>;
-            bindings =
-                <&kp LC(RIGHT_ARROW)>,
-                <&kp LC(LEFT_ARROW)>,
-                <&kp LC(UP_ARROW)>,
-                <&kp LG(F3)>;
-        };
-
-        cy_g10: cygnus_gesture_window {
-            compatible = "cygnus,input-processor-gesture";
-            status = "okay";
-            #input-processor-cells = <0>;
-            tick = <18>;
-            wait-ms = <20>;
-            tap-ms = <20>;
-            bindings =
-                <&kp LA(LG(RIGHT_ARROW))>,
-                <&kp LA(LG(LEFT_ARROW))>,
-                <&kp LC(LG(F))>,
-                <&kp LG(M)>;
-        };
-    };
-
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
-
-        gesture_back_copy {
-            layers = <6>;
-            input-processors = <&cy_g6>;
-        };
-
-        gesture_forward_tabs {
-            layers = <7>;
-            input-processors = <&cy_g7>;
-        };
-
-        gesture_pan {
-            layers = <8>;
-            input-processors = <&cy_g8>;
-        };
-
-        gesture_system {
-            layers = <9>;
-            input-processors = <&cy_g9>;
-        };
-
-        gesture_window {
-            layers = <10>;
-            input-processors = <&cy_g10>;
-        };
     };
 };
 

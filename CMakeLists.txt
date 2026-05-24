@@ -1,2 +1,2 @@
 zephyr_library()
-zephyr_library_sources(src/cygnus_gesture_processor.c)
+zephyr_library_sources_ifdef(CONFIG_CYGNUS_GESTURE_PROCESSOR src/cygnus_gesture_processor.c)

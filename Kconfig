@@ -1,4 +1,4 @@
 config CYGNUS_GESTURE_PROCESSOR
     bool "Cygnus trackball gesture input processor"
-    default y
+    default n
     depends on ZMK_POINTING

@@ -18,6 +18,7 @@
     cygnus_gesture_processors {
         cy_g6: cygnus_gesture_back_copy {
             compatible = "cygnus,input-processor-gesture";
+            status = "okay";
             #input-processor-cells = <0>;
             tick = <18>;
             wait-ms = <20>;
@@ -31,6 +32,7 @@
 
         cy_g7: cygnus_gesture_forward_tabs {
             compatible = "cygnus,input-processor-gesture";
+            status = "okay";
             #input-processor-cells = <0>;
             tick = <18>;
             wait-ms = <20>;
@@ -44,6 +46,7 @@
 
         cy_g8: cygnus_gesture_pan {
             compatible = "cygnus,input-processor-gesture";
+            status = "okay";
             #input-processor-cells = <0>;
             tick = <12>;
             wait-ms = <5>;
@@ -57,6 +60,7 @@
 
         cy_g9: cygnus_gesture_system {
             compatible = "cygnus,input-processor-gesture";
+            status = "okay";
             #input-processor-cells = <0>;
             tick = <18>;
             wait-ms = <20>;
@@ -70,6 +74,7 @@
 
         cy_g10: cygnus_gesture_window {
             compatible = "cygnus,input-processor-gesture";
+            status = "okay";
             #input-processor-cells = <0>;
             tick = <18>;
             wait-ms = <20>;

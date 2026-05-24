@@ -1,4 +1,7 @@
 #include "Cygnus.dtsi"
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/pointing.h>
 
 &default_transform {
     col-offset = <6>;

@@ -1,0 +1,19 @@
+description: Cygnus trackball gesture input processor
+
+compatible: "cygnus,input-processor-gesture"
+
+include: ip_zero_param.yaml
+
+properties:
+  tick:
+    type: int
+    default: 18
+  wait-ms:
+    type: int
+    default: 20
+  tap-ms:
+    type: int
+    default: 20
+  bindings:
+    type: phandle-array
+    required: true

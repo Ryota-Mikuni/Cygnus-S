@@ -1,23 +1,159 @@
 #include "Cygnus.dtsi"
+
 &default_transform {
     col-offset = <6>;
 };
 
 &kscan0 {
-        col-gpios
-            = <&xiao_d 10 GPIO_ACTIVE_HIGH>
-            , <&xiao_d 9 GPIO_ACTIVE_HIGH> 
-            , <&xiao_d 8 GPIO_ACTIVE_HIGH> 
-            , <&xiao_d 7 GPIO_ACTIVE_HIGH> 
-            , <&gpio0 10 GPIO_ACTIVE_HIGH>
-            ;
+    col-gpios
+        = <&xiao_d 10 GPIO_ACTIVE_HIGH>
+        , <&xiao_d 9 GPIO_ACTIVE_HIGH>
+        , <&xiao_d 8 GPIO_ACTIVE_HIGH>
+        , <&xiao_d 7 GPIO_ACTIVE_HIGH>
+        , <&gpio0 10 GPIO_ACTIVE_HIGH>
+        ;
 };
 
 / {
+    macros {
+        bt_mac_0: bt_select_mac_0 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <0>;
+            tap-ms = <20>;
+            bindings = <&bt BT_SEL 0>;
+        };
+
+        bt_mac_1: bt_select_mac_1 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <0>;
+            tap-ms = <20>;
+            bindings = <&bt BT_SEL 1>;
+        };
+
+        bt_win_2: bt_select_win_2 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <0>;
+            tap-ms = <20>;
+            bindings = <&bt BT_SEL 2>;
+        };
+
+        bt_win_3: bt_select_win_3 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <0>;
+            tap-ms = <20>;
+            bindings = <&bt BT_SEL 3>;
+        };
+
+        bt_reserve_4: bt_select_reserve_4 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <0>;
+            tap-ms = <20>;
+            bindings = <&bt BT_SEL 4>;
+        };
+    };
+
+    g6_back_copy: g6_back_copy {
+        compatible = "cygnus,input-processor-gesture";
+        #input-processor-cells = <0>;
+        tick = <40>;
+        wait-ms = <250>;
+        tap-ms = <20>;
+        /* right, left, up, down */
+        bindings = <&mkp MB5>, <&mkp MB4>, <&kp LG(C)>, <&kp LG(V)>;
+    };
+
+    g7_forward_tabs: g7_forward_tabs {
+        compatible = "cygnus,input-processor-gesture";
+        #input-processor-cells = <0>;
+        tick = <40>;
+        wait-ms = <250>;
+        tap-ms = <20>;
+        /* right, left, up, down */
+        bindings = <&kp LC(TAB)>, <&kp LS(LC(TAB))>, <&kp LG(T)>, <&kp LG(W)>;
+    };
+
+    g8_pan_scroll: g8_pan_scroll {
+        compatible = "cygnus,input-processor-gesture";
+        #input-processor-cells = <0>;
+        tick = <40>;
+        wait-ms = <120>;
+        tap-ms = <20>;
+        /* right, left, up, down */
+        bindings = <&kp RIGHT_ARROW>, <&kp LEFT_ARROW>, <&kp UP_ARROW>, <&kp DOWN_ARROW>;
+    };
+
+    g9_system: g9_system {
+        compatible = "cygnus,input-processor-gesture";
+        #input-processor-cells = <0>;
+        tick = <40>;
+        wait-ms = <300>;
+        tap-ms = <20>;
+        /* right, left, up, down */
+        bindings = <&kp LC(RIGHT_ARROW)>, <&kp LC(LEFT_ARROW)>, <&kp LC(UP_ARROW)>, <&kp LC(DOWN_ARROW)>;
+    };
+
+    g10_window: g10_window {
+        compatible = "cygnus,input-processor-gesture";
+        #input-processor-cells = <0>;
+        tick = <40>;
+        wait-ms = <300>;
+        tap-ms = <20>;
+        /* right, left, up, down */
+        bindings = <&kp LG(RIGHT_ARROW)>, <&kp LG(LEFT_ARROW)>, <&kp LC(LG(F))>, <&kp LG(M)>;
+    };
+
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
+
+        gesture_back_copy {
+            layers = <6>;
+            input-processors = <&g6_back_copy>;
+        };
+
+        gesture_forward_tabs {
+            layers = <7>;
+            input-processors = <&g7_forward_tabs>;
+        };
+
+        gesture_pan_scroll {
+            layers = <8>;
+            input-processors = <&g8_pan_scroll>;
+        };
+
+        gesture_system {
+            layers = <9>;
+            input-processors = <&g9_system>;
+        };
+
+        gesture_window {
+            layers = <10>;
+            input-processors = <&g10_window>;
+        };
     };
+};
+
+&{/keymap/automouse_layer} {
+    bindings = <
+        &am_k00  &am_k01  &am_k02  &am_k03  &am_k04  &am_k05  &am_k06  &am_k07  &am_k08  &am_k09
+        &am_k10  &am_k11  &am_k12  &am_k13  &am_k14  &kp C_MUTE  &mg 6 MB5  &mg 7 MB4  &mkp MB1  &mg 8 MB3  &mkp MB2  &am_k20
+        &am_k21  &am_k22  &am_k23  &am_k24  &am_k25  &am_k26  &am_k27  &am_k28  &am_k29  &am_k30  &am_k31  &am_k32
+        &to 0  &to 0  &to 0  &am_k36  &am_k37  &kg 10 ENTER  &kg 9 BSPC  &mo 5  &am_k41
+    >;
+};
+
+&{/keymap/scroll_layer} {
+    bindings = <
+        &bt_mac_0  &bt_mac_1  &bt_win_2  &bt_win_3  &bt_reserve_4  &trans  &trans  &trans  &trans  &trans
+        &bt BT_PRV  &bt BT_NXT  &bt BT_CLR  &trans  &trans  &kp C_MUTE  &trans  &trans  &trans  &trans  &trans  &trans
+        &bt BT_CLR_ALL  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+        &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+    >;
 };
 
 &pinctrl {

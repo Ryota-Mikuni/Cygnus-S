@@ -4,10 +4,13 @@
 // Note: verify the physical matrix order against the delivered Cygnus firmware before flashing.
 
 #include <behaviors.dtsi>
+#include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/pointing.h>
 
-&lt { tapping-term-ms = <200>; };
+&lt {
+    tapping-term-ms = <200>;
+};
 
 &mt {
     flavor = "balanced";
@@ -15,74 +18,217 @@
     quick-tap-ms = <0>;
 };
 
+&trackball {
+    automouse-layer = <4>;
+    scroll-layers = <5>;
+
+    back_copy_gesture {
+        layers = <6>;
+        bindings =
+            <&kp LG(V)>,
+            <&kp LG(C)>,
+            <&kp LG(A)>,
+            <&kp LG(R)>;
+        tick = <18>;
+        wait-ms = <20>;
+        tap-ms = <20>;
+    };
+
+    forward_tabs_gesture {
+        layers = <7>;
+        bindings =
+            <&kp LG(T)>,
+            <&kp LG(W)>,
+            <&kp LA(LG(UP_ARROW))>,
+            <&kp LA(LG(DOWN_ARROW))>;
+        tick = <18>;
+        wait-ms = <20>;
+        tap-ms = <20>;
+    };
+
+    pan_gesture {
+        layers = <8>;
+        bindings =
+            <&msc SCRL_RIGHT>,
+            <&msc SCRL_LEFT>,
+            <&msc SCRL_UP>,
+            <&msc SCRL_DOWN>;
+        tick = <12>;
+        wait-ms = <5>;
+        tap-ms = <5>;
+    };
+
+    system_gesture {
+        layers = <9>;
+        bindings =
+            <&kp LC(RIGHT_ARROW)>,
+            <&kp LC(LEFT_ARROW)>,
+            <&kp LC(UP_ARROW)>,
+            <&kp LG(F3)>;
+        tick = <18>;
+        wait-ms = <20>;
+        tap-ms = <20>;
+    };
+
+    window_gesture {
+        layers = <10>;
+        bindings =
+            <&kp LA(LG(RIGHT_ARROW))>,
+            <&kp LA(LG(LEFT_ARROW))>,
+            <&kp LC(LG(F))>,
+            <&kp LG(M)>;
+        tick = <18>;
+        wait-ms = <20>;
+        tap-ms = <20>;
+    };
+};
+
+
 / {
+    behaviors {
+        mg: mouse_gesture {
+            compatible = "zmk,behavior-hold-tap";
+            label = "MOUSE_GESTURE";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <0>;
+            bindings = <&mo>, <&mkp>;
+        };
+
+        kg: key_gesture {
+            compatible = "zmk,behavior-hold-tap";
+            label = "KEY_GESTURE";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <0>;
+            bindings = <&mo>, <&kp>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
-        default_layer {
-            display-name = "Base";
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
-            bindings = <
-&kp Q      &kp L     &kp U     &kp COMMA    &kp DOT                                                   &kp F      &kp W  &kp R  &kp Y  &kp P
-&kp E      &kp I     &kp A     &kp O        &kp MINUS         &kp C_MUTE       &kp LEFT_PARENTHESIS   &kp K      &kp T  &kp N  &kp S  &kp H
-&kp J      &kp X     &kp C     &kp V        &kp QMARK         &kp TAB          &kp RIGHT_PARENTHESIS  &kp G      &kp D  &kp M  &kp Z  &kp B
-&kp LCTRL  &kp LALT  &kp LGUI  &lt 3 LANG2  &mt LSHIFT SPACE  &lt 1 ENTER      &lt 2 BSPC             &kp LANG1                       &kp ESCAPE
-            >;
-        };
+            default_layer { // Layer 0: Base
+                display-name = "Base";
+                sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+                bindings = <
+                    &kp Q  &kp L  &kp U  &kp COMMA  &kp DOT  &kp F  &kp W  &kp R  &kp Y  &kp P
+                    &kp E  &kp I  &kp A  &kp O  &kp MINUS  &kp C_MUTE  &kp LEFT_PARENTHESIS  &kp K  &kp T  &kp N  &kp S  &kp H
+                    &kp J  &kp X  &kp C  &kp V  &kp QMARK  &kp TAB  &kp RIGHT_PARENTHESIS  &kp G  &kp D  &kp M  &kp Z  &kp B
+                    &kp LCTRL  &kp LALT  &kp LGUI  &lt 3 LANG2  &mt LSHIFT SPACE  &lt 1 ENTER  &lt 2 BSPC  &lt 5 LANG1  &kp ESCAPE
+                >;
+            };
 
-        num_layer {
-            display-name = "Num";
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
-            bindings = <
-&kp RBKT   &kp HASH  &kp N7    &kp N8       &kp N9                                        &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_PLUS      &kp KP_MINUS
-&kp SEMI   &kp SQT   &kp N4    &kp N5       &kp N6            &kp C_MUTE      &kp SQT     &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_DIVIDE
-&kp LBKT   &kp N0    &kp N1    &kp N2       &kp N3            &none           &kp N0      &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp SLASH        &kp KP_DOT
-&kp LCTRL  &kp LALT  &kp LGUI  &lt 3 LANG2  &mt LSHIFT SPACE  &none           &lt 2 BSPC  &kp LANG1                                                           &kp ESCAPE
-            >;
-        };
+            num_layer { // Layer 1: Num
+                display-name = "Num";
+                sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+                bindings = <
+                    &kp RBKT  &kp HASH  &kp N7  &kp N8  &kp N9  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_PLUS  &kp KP_MINUS
+                    &kp SEMI  &kp SQT  &kp N4  &kp N5  &kp N6  &kp C_MUTE  &kp COLON  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_DIVIDE
+                    &kp LBKT  &kp N0  &kp N1  &kp N2  &kp N3  &none  &kp N0  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp SLASH  &kp KP_DOT
+                    &kp LCTRL  &kp LALT  &kp LGUI  &lt 3 LANG2  &mt LSHIFT SPACE  &none  &lt 2 BSPC  &kp LANG1  &kp ESCAPE
+                >;
+            };
 
-        nav_layer {
-            display-name = "Nav";
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
-            bindings = <
-&kp HOME   &kp PG_UP       &kp UP_ARROW    &kp PG_DN        &kp END                                   &kp HOME   &kp PG_UP       &kp UP_ARROW    &kp PG_DN        &kp END
-&none      &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none             &kp C_MUTE       &none  &none      &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none
-&kp LG(Z)  &kp LG(X)       &kp LG(C)       &kp LG(V)        &kp LS(LG(Z))     &none            &none  &kp LG(Z)  &kp LG(X)       &kp LG(C)       &kp LG(V)        &kp LS(LG(Z))
-&kp LCTRL  &kp LALT        &kp LGUI        &lt 3 LANG2      &mt LSHIFT SPACE  &lt 1 ENTER      &none  &kp LANG1                                                   &kp ESCAPE
-            >;
-        };
+            nav_layer { // Layer 2: Nav
+                display-name = "Nav";
+                sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+                bindings = <
+                    &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END  &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END
+                    &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none  &kp C_MUTE  &none  &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none
+                    &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &kp LS(LG(Z))  &none  &none  &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &kp LS(LG(Z))
+                    &kp LCTRL  &kp LALT  &kp LGUI  &lt 3 LANG2  &mt LSHIFT SPACE  &lt 1 ENTER  &none  &kp LANG1  &kp ESCAPE
+                >;
+            };
 
-        function_layer {
-            display-name = "Fn";
-            sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN>;
-            bindings = <
-&kp F1     &kp F2    &kp F3    &kp F4  &kp F5                                         &kp F1     &kp F2   &kp F3  &kp F4  &kp F5
-&kp F6     &kp F7    &kp F8    &kp F9  &kp F10           &kp C_MUTE       &none       &kp F6     &kp F7   &kp F8  &kp F9  &kp F10
-&kp F11    &kp F12   &none     &none   &none             &none            &none       &kp F11    &kp F12  &none   &none   &none
-&kp LCTRL  &kp LALT  &kp LGUI  &none   &mt LSHIFT SPACE  &lt 1 ENTER      &lt 2 BSPC  &kp LANG1                           &kp ESCAPE
-            >;
-        };
+            function_layer { // Layer 3: Fn
+                display-name = "Fn";
+                sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN>;
+                bindings = <
+                    &kp F1  &kp F2  &kp F3  &kp F4  &kp F5  &kp F1  &kp F2  &kp F3  &kp F4  &kp F5
+                    &kp F6  &kp F7  &kp F8  &kp F9  &kp F10  &kp C_MUTE  &none  &kp F6  &kp F7  &kp F8  &kp F9  &kp F10
+                    &kp F11  &kp F12  &none  &none  &none  &none  &none  &kp F11  &kp F12  &none  &none  &none
+                    &kp LCTRL  &kp LALT  &kp LGUI  &none  &mt LSHIFT SPACE  &lt 1 ENTER  &lt 2 BSPC  &kp LANG1  &kp ESCAPE
+                >;
+            };
 
-        automouse_layer {
-            display-name = "AutoMouse";
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
-            bindings = <
-&trans  &trans  &trans  &trans  &trans                            &trans    &trans    &trans    &trans    &trans
-&trans  &trans  &trans  &trans  &trans  &kp C_MUTE      &mkp MB5  &mkp MB4  &mkp MB1  &mkp MB3  &mkp MB2  &trans
-&trans  &trans  &trans  &trans  &trans  &trans          &trans    &trans    &trans    &trans    &trans    &trans
-&trans  &trans  &trans  &trans  &trans  &kp ENTER       &kp BSPC  &mo 5                                   &trans
-            >;
-        };
+            automouse_layer { // Layer 4: AutoMouse
+                display-name = "AutoMouse";
+                sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+                bindings = <
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &kp C_MUTE  &mg 6 MB4  &mg 7 MB5  &mkp MB1  &mg 8 MB3  &mkp MB2  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &kg 10 ENTER  &kg 9 BSPC  &mo 5  &trans
+                >;
+            };
 
-        scroll_layer {
-            display-name = "Scroll";
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
-            bindings = <
-&trans  &trans  &trans  &trans  &trans                          &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &kp C_MUTE      &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans          &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans          &trans  &trans                          &trans
-            >;
-        };
+            scroll_layer { // Layer 5: Scroll
+                display-name = "Scroll";
+                sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+                bindings = <
+                    &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4  &trans  &trans  &trans  &trans  &trans
+                    &bt BT_PRV  &bt BT_NXT  &bt BT_CLR  &trans  &trans  &kp C_MUTE  &trans  &trans  &trans  &trans  &trans  &trans
+                    &bt BT_CLR_ALL  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                >;
+            };
+
+            gesture_back_copy_layer { // Layer 6: G6 BackCopy
+                display-name = "G6 BackCopy";
+                sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+                bindings = <
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &kp C_MUTE  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                >;
+            };
+
+            gesture_forward_tabs_layer { // Layer 7: G7 ForwardTabs
+                display-name = "G7 ForwardTabs";
+                sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+                bindings = <
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &kp C_MUTE  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                >;
+            };
+
+            gesture_pan_layer { // Layer 8: G8 Pan
+                display-name = "G8 Pan";
+                sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+                bindings = <
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &kp C_MUTE  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                >;
+            };
+
+            gesture_system_layer { // Layer 9: G9 System
+                display-name = "G9 System";
+                sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+                bindings = <
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &kp C_MUTE  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                >;
+            };
+
+            gesture_window_layer { // Layer 10: G10 Window
+                display-name = "G10 Window";
+                sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+                bindings = <
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &kp C_MUTE  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                >;
+            };
     };
 };

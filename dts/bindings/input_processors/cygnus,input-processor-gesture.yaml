@@ -2,9 +2,13 @@ description: Cygnus trackball gesture input processor
 
 compatible: "cygnus,input-processor-gesture"
 
-include: ip_zero_param.yaml
-
 properties:
+  "#input-processor-cells":
+    type: int
+    required: true
+    const: 0
+  track-remainders:
+    type: boolean
   tick:
     type: int
     default: 18

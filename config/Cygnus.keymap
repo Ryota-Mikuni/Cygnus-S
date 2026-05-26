@@ -287,6 +287,14 @@
             bindings = <&kp SPACE &to 0>;
         };
 
+        am_k40: automouse_base_40 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <0>;
+            tap-ms = <20>;
+            bindings = <&kp LANG1 &to 0>;
+        };
+
         am_k41: automouse_base_41 {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -359,7 +367,7 @@
                     &am_k00  &am_k01  &am_k02  &am_k03  &am_k04  &am_k05  &am_k06  &am_k07  &am_k08  &am_k09
                     &am_k10  &am_k11  &am_k12  &am_k13  &am_k14  &kp C_MUTE  &mg 6 MB4  &mg 7 MB5  &mkp MB1  &mg 8 MB3  &mkp MB2  &am_k20
                     &am_k21  &am_k22  &am_k23  &am_k24  &am_k25  &am_k26  &am_k27  &am_k28  &am_k29  &am_k30  &am_k31  &am_k32
-                    &to 0  &to 0  &to 0  &am_k36  &am_k37  &kg 10 ENTER  &kg 9 BSPC  &mo 5  &lt 5 ESCAPE
+                    &to 0  &to 0  &to 0  &am_k36  &am_k37  &kg 10 ENTER  &kg 9 BSPC  &am_k40  &lt 5 ESCAPE
                 >;
             };
 

@@ -1,23 +1,36 @@
-description: Cygnus trackball gesture input processor
+# Copyright (c) 2026
+# SPDX-License-Identifier: MIT
+
+description: Cygnus directional trackball gesture input processor
 
 compatible: "cygnus,input-processor-gesture"
 
+include: ip_zero_param.yaml
+
 properties:
-  "#input-processor-cells":
-    type: int
-    required: true
-    const: 0
   track-remainders:
     type: boolean
+    required: false
+
   tick:
     type: int
-    default: 18
+    required: false
+    default: 40
+    description: Relative movement threshold required to trigger a gesture.
+
   wait-ms:
     type: int
-    default: 20
+    required: false
+    default: 300
+    description: Minimum interval between gesture triggers.
+
   tap-ms:
     type: int
+    required: false
     default: 20
+    description: Press duration used when tapping the selected behavior binding.
+
   bindings:
     type: phandle-array
     required: true
+    description: Four behavior bindings in right, left, up, down order.

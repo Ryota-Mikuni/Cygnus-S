@@ -1,5 +1,7 @@
 #define DT_DRV_COMPAT zmk_behavior_cygnus_gesture
 
+#include <errno.h>
+
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/util.h>

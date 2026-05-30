@@ -1,11 +1,11 @@
 // Cygnus-S keymap
-// v7: moNa2-inspired encoder scroll + host-aware AutoMouse gesture design.
+// v8: encoder scroll + host-aware AutoMouse gesture layers.
 // - BT0/BT1: Mac host profile.
 // - BT2/BT3/BT4: Windows host profile via overlay layer.
 // - Encoder is the primary scroll input.
 // - Trackball keeps AutoMouse on Layer 4.
 // - AutoMouse is mouse/gesture mode: no text typing; Kana/Muhenkan explicitly returns to text.
-// - D/M/G physical positions use &cy_gesture for trackball-direction gestures.
+// - D/M/G physical positions use hold-tap to activate internal gesture layers.
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
@@ -21,10 +21,11 @@
 #define FN 6
 #define SYS 7
 #define WIN_AMOUSE 8
-
-#define CYG_GESTURE_D 1
-#define CYG_GESTURE_M 2
-#define CYG_GESTURE_G 3
+#define D_MAC 9
+#define M_MAC 10
+#define G_PAN 11
+#define D_WIN 12
+#define M_WIN 13
 
 &lt {
     tapping-term-ms = <200>;
@@ -42,8 +43,6 @@
     conditional_layers {
         compatible = "zmk,conditional-layers";
 
-        // When Windows overlay and AutoMouse are both active, this layer fixes
-        // host-specific return keys without changing the AutoMouse layer itself.
         win_automouse {
             if-layers = <WIN AMOUSE>;
             then-layer = <WIN_AMOUSE>;
@@ -65,26 +64,14 @@
             tap-ms = <20>;
         };
 
-        cy_gesture: cygnus_gesture {
-            compatible = "zmk,behavior-cygnus-gesture";
-            #binding-cells = <1>;
-            threshold = <70>;
-            ratio-numerator = <13>;
-            ratio-denominator = <10>;
-            win-layer = <WIN>;
-
-            // Binding order: no movement, left, right, up, down.
-            // D position: Back / Clipboard.
-            d-mac-bindings = <&mkp MB4 &kp LG(C) &kp LG(V) &kp LG(Z) &kp LS(LG(Z))>;
-            d-win-bindings = <&mkp MB4 &kp LC(C) &kp LC(V) &kp LC(Z) &kp LC(Y)>;
-
-            // M position: Forward / Navigation.
-            m-mac-bindings = <&mkp MB5 &kp LC(LS(TAB)) &kp LC(TAB) &kp LC(UP_ARROW) &kp F11>;
-            m-win-bindings = <&mkp MB5 &kp LC(LS(TAB)) &kp LC(TAB) &kp LG(TAB) &kp LG(D)>;
-
-            // G position: Middle / Pan. Directional pan is handled by the input processor.
-            g-mac-bindings = <&mkp MB3 &none &none &none &none>;
-            g-win-bindings = <&mkp MB3 &none &none &none &none>;
+        mg: mouse_gesture {
+            compatible = "zmk,behavior-hold-tap";
+            label = "MOUSE_GESTURE";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <0>;
+            bindings = <&mo>, <&mkp>;
         };
     };
 
@@ -94,7 +81,6 @@
             #binding-cells = <0>;
             wait-ms = <0>;
             tap-ms = <20>;
-            // macOS screenshot UI: Shift + Command + 5
             bindings = <&kp LS(LG(N5))>;
         };
 
@@ -103,7 +89,6 @@
             #binding-cells = <0>;
             wait-ms = <0>;
             tap-ms = <20>;
-            // Windows snipping UI: Windows + Shift + S
             bindings = <&kp LS(LG(S))>;
         };
 
@@ -233,7 +218,7 @@
             bindings = <
                     &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
                     &none  &none  &none  &none  &none  &kp C_MUTE  &none  &none  &mkp MB1  &mkp MB3  &mkp MB2  &none
-                    &none  &none  &none  &none  &none  &none  &none  &cy_gesture CYG_GESTURE_G  &cy_gesture CYG_GESTURE_D  &cy_gesture CYG_GESTURE_M  &none  &none
+                    &none  &none  &none  &none  &none  &none  &none  &mg G_PAN MB3  &mg D_MAC MB4  &mg M_MAC MB5  &none  &none
                     &none  &none  &none  &text_return_mac_en  &none  &none  &none  &text_return_mac  &kp ESCAPE
             >;
         };
@@ -277,8 +262,63 @@
             bindings = <
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &mg G_PAN MB3  &mg D_WIN MB4  &mg M_WIN MB5  &trans  &trans
                     &trans  &trans  &trans  &text_return_win_en  &trans  &trans  &trans  &text_return_win  &kp ESCAPE
+            >;
+        };
+
+        d_mac_gesture_layer { // Layer 9: internal D gesture, Mac
+            display-name = "D-Mac";
+            sensor-bindings = <&scroll_up_down>;
+            bindings = <
+                    &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none
+            >;
+        };
+
+        m_mac_gesture_layer { // Layer 10: internal M gesture, Mac
+            display-name = "M-Mac";
+            sensor-bindings = <&scroll_up_down>;
+            bindings = <
+                    &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none
+            >;
+        };
+
+        g_pan_layer { // Layer 11: internal G pan
+            display-name = "G-Pan";
+            sensor-bindings = <&scroll_up_down>;
+            bindings = <
+                    &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none
+            >;
+        };
+
+        d_win_gesture_layer { // Layer 12: internal D gesture, Windows
+            display-name = "D-Win";
+            sensor-bindings = <&scroll_up_down>;
+            bindings = <
+                    &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none
+            >;
+        };
+
+        m_win_gesture_layer { // Layer 13: internal M gesture, Windows
+            display-name = "M-Win";
+            sensor-bindings = <&scroll_up_down>;
+            bindings = <
+                    &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none
             >;
         };
     };

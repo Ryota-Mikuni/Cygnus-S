@@ -12,6 +12,7 @@
 #include <drivers/input_processor.h>
 
 #include <zmk/behavior.h>
+#include <zmk/events/position_state_changed.h>
 #include <zmk/keymap.h>
 #include <zmk/virtual_key_position.h>
 

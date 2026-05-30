@@ -117,7 +117,21 @@ static const struct behavior_driver_api cygnus_gesture_driver_api = {
     .binding_released = on_keymap_binding_released,
 };
 
-#define CYG_EXTRACT_BINDING(i, node) ZMK_KEYMAP_EXTRACT_BINDING(i, node)
+#define CYG_BINDING_FROM_PROP(idx, inst, prop)                                                     \
+    {                                                                                              \
+        .behavior_dev = DEVICE_DT_NAME(DT_PHANDLE_BY_IDX(DT_DRV_INST(inst), prop, idx)),           \
+        .param1 = COND_CODE_0(DT_PHA_HAS_CELL_AT_IDX(DT_DRV_INST(inst), prop, idx, param1), (0),   \
+                              (DT_PHA_BY_IDX(DT_DRV_INST(inst), prop, idx, param1))),              \
+        .param2 = COND_CODE_0(DT_PHA_HAS_CELL_AT_IDX(DT_DRV_INST(inst), prop, idx, param2), (0),   \
+                              (DT_PHA_BY_IDX(DT_DRV_INST(inst), prop, idx, param2))),              \
+    }
+
+#define CYG_D_MAC_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, d_mac_bindings)
+#define CYG_D_WIN_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, d_win_bindings)
+#define CYG_M_MAC_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, m_mac_bindings)
+#define CYG_M_WIN_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, m_win_bindings)
+#define CYG_G_MAC_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, g_mac_bindings)
+#define CYG_G_WIN_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, g_win_bindings)
 
 #define CYG_ASSERT_BINDINGS_LEN(n, prop)                                                           \
     BUILD_ASSERT(DT_INST_PROP_LEN(n, prop) == CYGNUS_GESTURE_BINDING_COUNT,                        \
@@ -125,17 +139,17 @@ static const struct behavior_driver_api cygnus_gesture_driver_api = {
 
 #define CYG_INST(n)                                                                                \
     static const struct zmk_behavior_binding cyg_d_mac_bindings_##n[] = {                          \
-        LISTIFY(DT_INST_PROP_LEN(n, d_mac_bindings), CYG_EXTRACT_BINDING, (, ), DT_DRV_INST(n))};  \
+        LISTIFY(DT_INST_PROP_LEN(n, d_mac_bindings), CYG_D_MAC_BINDING, (, ), n)};                 \
     static const struct zmk_behavior_binding cyg_d_win_bindings_##n[] = {                          \
-        LISTIFY(DT_INST_PROP_LEN(n, d_win_bindings), CYG_EXTRACT_BINDING, (, ), DT_DRV_INST(n))};  \
+        LISTIFY(DT_INST_PROP_LEN(n, d_win_bindings), CYG_D_WIN_BINDING, (, ), n)};                 \
     static const struct zmk_behavior_binding cyg_m_mac_bindings_##n[] = {                          \
-        LISTIFY(DT_INST_PROP_LEN(n, m_mac_bindings), CYG_EXTRACT_BINDING, (, ), DT_DRV_INST(n))};  \
+        LISTIFY(DT_INST_PROP_LEN(n, m_mac_bindings), CYG_M_MAC_BINDING, (, ), n)};                 \
     static const struct zmk_behavior_binding cyg_m_win_bindings_##n[] = {                          \
-        LISTIFY(DT_INST_PROP_LEN(n, m_win_bindings), CYG_EXTRACT_BINDING, (, ), DT_DRV_INST(n))};  \
+        LISTIFY(DT_INST_PROP_LEN(n, m_win_bindings), CYG_M_WIN_BINDING, (, ), n)};                 \
     static const struct zmk_behavior_binding cyg_g_mac_bindings_##n[] = {                          \
-        LISTIFY(DT_INST_PROP_LEN(n, g_mac_bindings), CYG_EXTRACT_BINDING, (, ), DT_DRV_INST(n))};  \
+        LISTIFY(DT_INST_PROP_LEN(n, g_mac_bindings), CYG_G_MAC_BINDING, (, ), n)};                 \
     static const struct zmk_behavior_binding cyg_g_win_bindings_##n[] = {                          \
-        LISTIFY(DT_INST_PROP_LEN(n, g_win_bindings), CYG_EXTRACT_BINDING, (, ), DT_DRV_INST(n))};  \
+        LISTIFY(DT_INST_PROP_LEN(n, g_win_bindings), CYG_G_WIN_BINDING, (, ), n)};                 \
     CYG_ASSERT_BINDINGS_LEN(n, d_mac_bindings);                                                    \
     CYG_ASSERT_BINDINGS_LEN(n, d_win_bindings);                                                    \
     CYG_ASSERT_BINDINGS_LEN(n, m_mac_bindings);                                                    \

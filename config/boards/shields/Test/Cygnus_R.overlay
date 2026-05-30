@@ -14,9 +14,15 @@
 };
 
 / {
+    cygnus_gesture_processor: cygnus_gesture_processor {
+        compatible = "zmk,input-processor-cygnus-gesture";
+        #input-processor-cells = <0>;
+    };
+
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
+        input-processors = <&cygnus_gesture_processor>;
     };
 };
 

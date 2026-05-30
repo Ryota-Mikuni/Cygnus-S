@@ -1,0 +1,37 @@
+description: Cygnus trackball gesture key behavior
+
+compatible: "zmk,behavior-cygnus-gesture"
+
+include: one_param.yaml
+
+properties:
+  threshold:
+    type: int
+    default: 70
+  ratio-numerator:
+    type: int
+    default: 13
+  ratio-denominator:
+    type: int
+    default: 10
+  win-layer:
+    type: int
+    required: true
+  d-mac-bindings:
+    type: phandle-array
+    required: true
+  d-win-bindings:
+    type: phandle-array
+    required: true
+  m-mac-bindings:
+    type: phandle-array
+    required: true
+  m-win-bindings:
+    type: phandle-array
+    required: true
+  g-mac-bindings:
+    type: phandle-array
+    required: true
+  g-win-bindings:
+    type: phandle-array
+    required: true

@@ -1,18 +1,17 @@
 // Cygnus-S keymap
-// v6: moNa2-inspired encoder scroll + host-aware AutoMouse design.
+// v7: moNa2-inspired encoder scroll + host-aware AutoMouse gesture design.
 // - BT0/BT1: Mac host profile.
 // - BT2/BT3/BT4: Windows host profile via overlay layer.
 // - Encoder is the primary scroll input.
 // - Trackball keeps AutoMouse on Layer 4.
 // - AutoMouse is mouse/gesture mode: no text typing; Kana/Muhenkan explicitly returns to text.
-// - True ball-direction gesture detection requires a custom input processor/module;
-//   this keymap reserves the D/M/G physical positions for that design and implements
-//   the no-movement tap actions now.
+// - D/M/G physical positions use &cy_gesture for trackball-direction gestures.
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/pointing.h>
+#include <dt-bindings/zmk/cygnus_gesture.h>
 
 #define BASE 0
 #define WIN 1
@@ -61,6 +60,28 @@
             #sensor-binding-cells = <0>;
             bindings = <&msc SCRL_LEFT>, <&msc SCRL_RIGHT>;
             tap-ms = <20>;
+        };
+
+        cy_gesture: cygnus_gesture {
+            compatible = "zmk,behavior-cygnus-gesture";
+            #binding-cells = <1>;
+            threshold = <70>;
+            ratio-numerator = <13>;
+            ratio-denominator = <10>;
+            win-layer = <WIN>;
+
+            // Binding order: no movement, left, right, up, down.
+            // D position: Back / Clipboard.
+            d-mac-bindings = <&mkp MB4>, <&kp LG(C)>, <&kp LG(V)>, <&kp LG(Z)>, <&kp LS(LG(Z))>;
+            d-win-bindings = <&mkp MB4>, <&kp LC(C)>, <&kp LC(V)>, <&kp LC(Z)>, <&kp LC(Y)>;
+
+            // M position: Forward / Navigation.
+            m-mac-bindings = <&mkp MB5>, <&kp LC(LS(TAB))>, <&kp LC(TAB)>, <&kp LC(UP_ARROW)>, <&kp F11>;
+            m-win-bindings = <&mkp MB5>, <&kp LC(LS(TAB))>, <&kp LC(TAB)>, <&kp LG(TAB)>, <&kp LG(D)>;
+
+            // G position: Middle / Pan. Directional pan is handled by the input processor.
+            g-mac-bindings = <&mkp MB3>, <&none>, <&none>, <&none>, <&none>;
+            g-win-bindings = <&mkp MB3>, <&none>, <&none>, <&none>, <&none>;
         };
     };
 
@@ -209,7 +230,7 @@
             bindings = <
                     &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
                     &none  &none  &none  &none  &none  &kp C_MUTE  &none  &none  &mkp MB1  &mkp MB3  &mkp MB2  &none
-                    &none  &none  &none  &none  &none  &none  &none  &mkp MB3  &mkp MB4  &mkp MB5  &none  &none
+                    &none  &none  &none  &none  &none  &none  &none  &cy_gesture CYG_GESTURE_G  &cy_gesture CYG_GESTURE_D  &cy_gesture CYG_GESTURE_M  &none  &none
                     &none  &none  &none  &text_return_mac_en  &none  &none  &none  &text_return_mac  &kp ESCAPE
             >;
         };

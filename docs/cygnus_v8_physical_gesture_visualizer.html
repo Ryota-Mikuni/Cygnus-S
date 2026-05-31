@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cygnus-S v8 Physical Gesture Visualizer</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f5f7fb;
+  --ink:#151b2c;
+  --muted:#667085;
+  --line:#cfd6e4;
+  --panel:#ffffff;
+  --panel-2:#f9fafc;
+  --accent:#0f766e;
+  --accent-2:#2563eb;
+  --warn:#b45309;
+  --danger:#b42318;
+  --key:#ffffff;
+  --alpha:#f7fbff;
+  --nav:#ecfdf3;
+  --num:#fff7ed;
+  --mouse:#f5f3ff;
+  --sys:#fef2f2;
+  --mod:#eef2ff;
+  --empty:#eef2f6;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+main{
+  max-width:1500px;
+  margin:0 auto;
+  padding:18px;
+}
+.topbar{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:14px;
+  align-items:start;
+  margin-bottom:14px;
+}
+h1{
+  margin:0 0 6px;
+  font-size:24px;
+  line-height:1.25;
+  letter-spacing:0;
+}
+.lede{
+  margin:0;
+  color:var(--muted);
+  line-height:1.65;
+  font-size:14px;
+}
+.status{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(110px,auto));
+  gap:8px;
+}
+.stat{
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:8px;
+  padding:9px 10px;
+  min-width:130px;
+}
+.stat b{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:3px}
+.stat span{font-size:13px;font-weight:800}
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:8px;
+  padding:10px;
+  margin-bottom:14px;
+}
+.group{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.group-label{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  margin-right:2px;
+}
+button{
+  appearance:none;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--ink);
+  border-radius:8px;
+  min-height:34px;
+  padding:0 11px;
+  font-weight:800;
+  font-size:13px;
+  cursor:pointer;
+}
+button.active{
+  background:#102a43;
+  color:#fff;
+  border-color:#102a43;
+}
+button.host.active{background:var(--accent);border-color:var(--accent)}
+button.layer.active{background:var(--accent-2);border-color:var(--accent-2)}
+.workspace{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  align-items:start;
+}
+.board-panel,.side-panel,.gesture-panel,.matrix-panel{
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:8px;
+}
+.board-panel{padding:12px;order:1}
+.panel-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  margin-bottom:10px;
+}
+.panel-title{
+  margin:0;
+  font-size:16px;
+  line-height:1.35;
+}
+.panel-note{
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+}
+.legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  justify-content:flex-end;
+}
+.pill{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:5px 7px;
+  font-size:11px;
+  font-weight:800;
+  background:#fff;
+  color:#344054;
+  white-space:nowrap;
+}
+.pill.alpha{background:var(--alpha)}
+.pill.nav{background:var(--nav)}
+.pill.num{background:var(--num)}
+.pill.mouse{background:var(--mouse)}
+.pill.sys{background:var(--sys)}
+.pill.mod{background:var(--mod)}
+.board-scroll{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:linear-gradient(#fbfcff,#f6f8fc);
+}
+.board{
+  position:relative;
+  width:1300px;
+  height:500px;
+  margin:0;
+}
+.key{
+  position:absolute;
+  border:1px solid #aeb8ca;
+  border-radius:8px;
+  background:var(--key);
+  box-shadow:0 2px 0 rgba(16,24,40,.08);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap:3px;
+  padding:5px;
+  cursor:pointer;
+  overflow:hidden;
+}
+.key .idx{
+  position:absolute;
+  top:3px;
+  left:5px;
+  font-size:9px;
+  color:#98a2b3;
+  font-weight:800;
+}
+.key .main{
+  font-size:14px;
+  line-height:1.1;
+  font-weight:900;
+  word-break:break-word;
+}
+.key .sub{
+  font-size:10px;
+  line-height:1.1;
+  color:#475467;
+  font-weight:800;
+  word-break:break-word;
+}
+.key.alpha{background:var(--alpha)}
+.key.nav{background:var(--nav)}
+.key.num{background:var(--num)}
+.key.mouse{background:var(--mouse)}
+.key.sys{background:var(--sys)}
+.key.mod{background:var(--mod)}
+.key.empty{background:var(--empty);border-style:dashed;color:#98a2b3}
+.key.gesture{
+  border:2px solid var(--accent);
+  box-shadow:0 0 0 3px rgba(15,118,110,.13),0 2px 0 rgba(16,24,40,.08);
+}
+.key.selected{
+  outline:3px solid rgba(37,99,235,.28);
+  border-color:#1d4ed8;
+}
+.key.host-diff::after{
+  content:"";
+  position:absolute;
+  right:5px;
+  top:5px;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--accent-2);
+}
+.trackball{
+  position:absolute;
+  left:960px;
+  top:318px;
+  width:154px;
+  height:154px;
+  border-radius:50%;
+  border:2px solid #8aa0bd;
+  background:radial-gradient(circle at 38% 32%,#fff 0,#dbeafe 24%,#9db5d5 62%,#64748b 100%);
+  box-shadow:inset 0 7px 18px rgba(255,255,255,.75),0 10px 24px rgba(16,24,40,.14);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:18px;
+  font-weight:900;
+  color:#102a43;
+  font-size:13px;
+}
+.encoder{
+  position:absolute;
+  left:563px;
+  top:45px;
+  width:86px;
+  height:86px;
+  border-radius:50%;
+  border:2px solid #98a2b3;
+  background:repeating-conic-gradient(from 0deg,#e5e7eb 0deg 14deg,#fff 14deg 28deg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#344054;
+  font-weight:900;
+  font-size:12px;
+}
+.side-panel{
+  order:3;
+  padding:12px;
+  display:grid;
+  grid-template-columns:360px minmax(0,1fr);
+  gap:12px;
+}
+.detail{
+  border:1px solid var(--line);
+  background:var(--panel-2);
+  border-radius:8px;
+  padding:12px;
+}
+.detail h2{
+  margin:0 0 8px;
+  font-size:18px;
+  line-height:1.25;
+}
+.detail-row{
+  display:grid;
+  grid-template-columns:94px 1fr;
+  gap:8px;
+  border-top:1px solid #e4e7ec;
+  padding:8px 0;
+  font-size:13px;
+  line-height:1.45;
+}
+.detail-row:first-of-type{border-top:0}
+.detail-row b{color:var(--muted);font-size:12px}
+.side-list{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.side-item{
+  border:1px solid #e4e7ec;
+  border-radius:8px;
+  padding:9px 10px;
+  background:#fff;
+}
+.side-item b{display:block;font-size:12px;color:#344054;margin-bottom:3px}
+.side-item span{font-size:13px;color:#475467;line-height:1.45}
+.gesture-panel{
+  grid-column:1 / -1;
+  order:2;
+  padding:12px;
+}
+.gesture-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.gesture-card{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:12px;
+  background:#fff;
+}
+.gesture-card h3{
+  margin:0 0 8px;
+  font-size:15px;
+}
+.gesture-card p{
+  margin:0 0 10px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+}
+.dpad{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:auto auto auto;
+  gap:6px;
+  align-items:center;
+}
+.dir,.tap{
+  border:1px solid #d0d5dd;
+  border-radius:8px;
+  padding:7px;
+  min-height:48px;
+  background:#f8fafc;
+  font-size:12px;
+  line-height:1.25;
+  font-weight:800;
+  text-align:center;
+}
+.tap{
+  background:#ecfdf3;
+  border-color:#a7f3d0;
+}
+.dir small,.tap small{
+  display:block;
+  color:#667085;
+  font-size:10px;
+  margin-bottom:2px;
+}
+.matrix-panel{
+  grid-column:1 / -1;
+  order:4;
+  padding:12px;
+}
+.matrix{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:8px;
+}
+.mini{
+  border:1px solid #e4e7ec;
+  border-radius:8px;
+  padding:9px;
+  background:#fff;
+  min-height:86px;
+}
+.mini b{
+  display:block;
+  font-size:12px;
+  margin-bottom:6px;
+}
+.mini span{
+  display:block;
+  font-size:12px;
+  line-height:1.4;
+  color:#475467;
+}
+@media(max-width:1180px){
+  .workspace{grid-template-columns:1fr}
+  .status{grid-template-columns:1fr 1fr}
+  .side-panel{grid-template-columns:1fr}
+  .side-list{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  main{padding:12px}
+  .topbar{grid-template-columns:1fr}
+  .status{grid-template-columns:1fr}
+  .gesture-grid,.matrix{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main>
+  <header class="topbar">
+    <div>
+      <h1>Cygnus-S v8 Physical Gesture Visualizer</h1>
+      <p class="lede">物理43ポジション、Mac/Windows host差分、AutoMouse上のD/M/Gジェスチャーを同じ画面で確認できるキーマップビュー。</p>
+    </div>
+    <div class="status" aria-label="build status">
+      <div class="stat"><b>Commit</b><span>4dc0740d</span></div>
+      <div class="stat"><b>Gesture debounce</b><span>wait 500ms</span></div>
+      <div class="stat"><b>AutoMouse</b><span>Layer 4</span></div>
+      <div class="stat"><b>BT host</b><span>0-1 Mac / 2-4 Win</span></div>
+    </div>
+  </header>
+
+  <nav class="toolbar" aria-label="visualizer controls">
+    <div class="group" id="hostButtons">
+      <span class="group-label">Host</span>
+      <button class="host active" data-host="mac" type="button">Mac BT0/BT1</button>
+      <button class="host" data-host="win" type="button">Windows BT2-BT4</button>
+    </div>
+    <div class="group" id="layerButtons">
+      <span class="group-label">Layer</span>
+    </div>
+    <div class="group">
+      <span class="group-label">Focus</span>
+      <button id="gestureFocus" type="button">D/M/G gesture</button>
+      <button id="clearFocus" type="button">Clear</button>
+    </div>
+  </nav>
+
+  <section class="workspace">
+    <section class="board-panel">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title" id="layerTitle"></h2>
+          <p class="panel-note" id="layerNote"></p>
+        </div>
+        <div class="legend">
+          <span class="pill alpha">text</span>
+          <span class="pill num">number</span>
+          <span class="pill nav">nav/edit</span>
+          <span class="pill mouse">mouse</span>
+          <span class="pill mod">modifier</span>
+          <span class="pill sys">system</span>
+        </div>
+      </div>
+      <div class="board-scroll">
+        <div class="board" id="board" aria-label="Cygnus physical keymap"></div>
+      </div>
+    </section>
+
+    <aside class="side-panel">
+      <section class="detail" id="detail"></section>
+      <section class="side-list">
+        <div class="side-item"><b>Host behavior</b><span id="hostSummary"></span></div>
+        <div class="side-item"><b>Pointer / scroll</b><span>Trackball movement enters AutoMouse. Encoder handles vertical scroll on Base/Num/AutoMouse and horizontal scroll on Nav.</span></div>
+        <div class="side-item"><b>Gesture model</b><span>AutoMouse内でD/M/Gをholdすると内部gesture layerが有効化され、ボール移動の方向でショートカットを発火する。</span></div>
+      </section>
+    </aside>
+
+    <section class="gesture-panel">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">D/M/G gesture map</h2>
+          <p class="panel-note">方向順は実装上 right / left / up / down。Tapはmouse button、Hold + ball movementは方向ショートカット。</p>
+        </div>
+      </div>
+      <div class="gesture-grid" id="gestureGrid"></div>
+    </section>
+
+    <section class="matrix-panel">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">Layer overview</h2>
+          <p class="panel-note">ユーザーに見える主要レイヤーだけをまとめ、内部gesture layerはD/M/Gのhold動作として表示。</p>
+        </div>
+      </div>
+      <div class="matrix" id="layerMatrix"></div>
+    </section>
+  </section>
+</main>
+
+<script>
+const physical = [
+  [0,0,37,0],[1,100,12,0],[2,200,0,0],[3,300,12,0],[4,400,24,0],
+  [5,800,24,0],[6,900,12,0],[7,1000,0,0],[8,1100,12,0],[9,1200,37,0],
+  [10,0,137,0],[11,100,112,0],[12,200,100,0],[13,300,112,0],[14,400,124,0],[15,500,137,0],
+  [16,700,137,0],[17,800,124,0],[18,900,112,0],[19,1000,100,0],[20,1100,112,0],[21,1200,137,0],
+  [22,0,237,0],[23,100,212,0],[24,200,200,0],[25,300,212,0],[26,400,224,0],[27,500,237,0],
+  [28,700,237,0],[29,800,224,0],[30,900,212,0],[31,1000,200,0],[32,1100,212,0],[33,1200,237,0],
+  [34,0,337,0],[35,100,312,0],[36,200,300,0],[37,325,337,0],[38,437,350,10],[39,550,387,20],
+  [40,650,387,-20],[41,763,350,-10],[42,1200,337,0],
+];
+
+const gestureIndex = new Set([29,30,31]);
+const hostDiffIndices = new Set([34,36,40,42,37,41,30,31]);
+const keySize = {w:100,h:100};
+const boardSize = {w:1300,h:500};
+
+const layers = {
+  base:{
+    name:"Base",
+    sensor:"Encoder vertical scroll",
+    note:"Baseは文字入力を優先。右端はHost別スクリーンショット。EscapeはBaseから退避。",
+    overview:"文字入力中心。D/M/GはBaseでは通常文字、GestureはAutoMouseで使う。",
+    mac:["Q","L","U",",",".","F","W","R","Y","P","E","I","A","O","-","Mute","(","K","T","N","S","H","J","X","C","V","?","Tab",")","G","D","M","Z","B","Ctrl|Sub","Alt|Option","Cmd|Primary","英数|hold Fn","Space|hold Shift","Enter|hold Num","Bspc|hold Nav","かな","Screenshot|Shift Cmd 5"],
+    win:["Q","L","U",",",".","F","W","R","Y","P","E","I","A","O","-","Mute","(","K","T","N","S","H","J","X","C","V","?","Tab",")","G","D","M","Z","B","Win|OS/Sub","Alt","Ctrl|Primary","英数|hold Fn","Space|hold Shift","Enter|hold Num","Bspc|hold NavWin","かな","Snipping|Win Shift S"]
+  },
+  num:{
+    name:"Num/Sym",
+    sensor:"Encoder vertical scroll",
+    note:"数字・記号・テンキー。現行keymapではHost差分は薄く、主要差分はBase/Nav/AutoMouse側。",
+    overview:"数字、記号、テンキーを集約。Enter側のNum holdから入る。",
+    mac:["]","#","7","8","9","KP7","KP8","KP9","KP+","KP-",";","'","4","5","6","Mute","SQT","KP4","KP5","KP6","KP*","KP/","[","0","1","2","3","-","0","KP1","KP2","KP3","/","KP.","Ctrl","Alt","Cmd","英数|hold Fn","Space|hold Shift","none","Bspc|hold Nav","かな","Esc"],
+    win:null
+  },
+  nav:{
+    name:"Nav/Edit",
+    sensor:"Encoder horizontal scroll",
+    note:"移動・編集・コピー系。MacはCmd系、WindowsはCtrl系に寄せる。",
+    overview:"矢印、ページ移動、Undo/Cut/Copy/Paste/Redo。",
+    mac:["Home","PgUp","Up","PgDn","End","Home","PgUp","Up","PgDn","End","none","Left","Down","Right","none","Mute","none","none","Left","Down","Right","none","Undo|Cmd Z","Cut|Cmd X","Copy|Cmd C","Paste|Cmd V","Redo|Shift Cmd Z","none","none","Undo|Cmd Z","Cut|Cmd X","Copy|Cmd C","Paste|Cmd V","Redo|Shift Cmd Z","Ctrl","Alt","Cmd","英数|hold Fn","Space|hold Shift","Enter|hold Num","none","かな","Esc"],
+    win:["Home","PgUp","Up","PgDn","End","Home","PgUp","Up","PgDn","End","none","Left","Down","Right","none","Mute","none","none","Left","Down","Right","none","Undo|Ctrl Z","Cut|Ctrl X","Copy|Ctrl C","Paste|Ctrl V","Redo|Ctrl Y","none","none","Undo|Ctrl Z","Cut|Ctrl X","Copy|Ctrl C","Paste|Ctrl V","Redo|Ctrl Y","Win","Alt","Ctrl","英数|hold Fn","Space|hold Shift","Enter|hold Num","none","かな","Esc"]
+  },
+  automouse:{
+    name:"AutoMouse",
+    sensor:"Encoder vertical scroll",
+    note:"文字入力を止めたmouse/gesture mode。D/M/Gをholdしながらtrackballを動かす。",
+    overview:"クリック、明示的な文章復帰、D/M/G gesture。",
+    mac:["none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","Mute","none","none","Left Click|MB1","Middle|MB3","Right Click|MB2","none","none","none","none","none","none","none","none","G Gesture|tap MB3 / hold Pan","D Gesture|tap Back / hold Clipboard","M Gesture|tap Forward / hold Nav","none","none","none","none","none","英数|return text","none","none","none","かな|return text","Esc"],
+    win:["none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","Mute","none","none","Left Click|MB1","Middle|MB3","Right Click|MB2","none","none","none","none","none","none","none","none","G Gesture|tap MB3 / hold Pan","D Gesture|tap Back / hold Clipboard","M Gesture|tap Forward / hold Nav","none","none","none","none","none","英数|return Win text","none","none","none","かな|return Win text","Esc"]
+  },
+  fn:{
+    name:"Fn",
+    sensor:"Encoder brightness",
+    note:"Fキー、明るさ、System入口。Escapeもここで使える。",
+    overview:"F1-F12、明るさ、System/BT入口。",
+    mac:["F1","F2","F3","F4","F5","F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","Mute","none","F6","F7","F8","F9","F10","F11","F12","none","none","none","none","none","F11","F12","none","none","none","Ctrl","Alt","Cmd","none","Space|hold Shift","Enter|hold Num","Bspc|hold Nav","System","Esc"],
+    win:null
+  },
+  system:{
+    name:"System/BT",
+    sensor:"Encoder volume",
+    note:"Bluetooth profileとbootloader。通常操作から誤爆しにくい場所に分離。",
+    overview:"BT0/1 Mac、BT2-4 Windows、BT Clear、Bootloader。",
+    mac:["BT0|Mac","BT1|Mac","BT2|Win","BT3|Win","BT4|Win","none","none","none","none","none","BT Prev","BT Next","BT Clear","none","none","Mute","none","none","none","none","none","none","BT Clear All","none","none","none","none","none","Bootloader","none","none","none","none","none","trans","trans","trans","trans","trans","trans","trans","trans","trans"],
+    win:null
+  }
+};
+layers.num.win = layers.num.mac;
+layers.fn.win = layers.fn.mac;
+layers.system.win = layers.system.mac;
+
+const gestures = {
+  mac:{
+    D:{title:"D: Back / Clipboard",tap:"Back / MB4",left:"Copy / Cmd C",right:"Paste / Cmd V",up:"Undo / Cmd Z",down:"Redo / Shift Cmd Z",note:"D位置はAutoMouseでtapならBack、hold + ballでClipboard操作。"},
+    M:{title:"M: Forward / Navigation",tap:"Forward / MB5",left:"Prev Tab / Ctrl Shift Tab",right:"Next Tab / Ctrl Tab",up:"Overview / Ctrl Up",down:"Desktop / F11",note:"MacのOverview/DesktopはmacOS側ショートカット設定に依存する可能性あり。"},
+    G:{title:"G: Middle / Pan",tap:"Middle / MB3",left:"Pan left",right:"Pan right",up:"Pan up",down:"Pan down",note:"G hold中はXY movementをscroll/panに寄せる。"}
+  },
+  win:{
+    D:{title:"D: Back / Clipboard",tap:"Back / MB4",left:"Copy / Ctrl C",right:"Paste / Ctrl V",up:"Undo / Ctrl Z",down:"Redo / Ctrl Y",note:"Windows hostではPrimary shortcutをCtrlへ置換。"},
+    M:{title:"M: Forward / Navigation",tap:"Forward / MB5",left:"Prev Tab / Ctrl Shift Tab",right:"Next Tab / Ctrl Tab",up:"Task View / Win Tab",down:"Desktop / Win D",note:"Windows hostではWindow操作をWin系へ寄せる。"},
+    G:{title:"G: Middle / Pan",tap:"Middle / MB3",left:"Pan left",right:"Pan right",up:"Pan up",down:"Pan down",note:"GはHost共通のpan系。"}
+  }
+};
+
+const layerOrder = ["base","num","nav","automouse","fn","system"];
+let state = {host:"mac",layer:"base",selected:30,gestureFocus:false};
+
+function splitLabel(value){
+  const [main,sub] = String(value).split("|");
+  return {main:main || "", sub:sub || ""};
+}
+
+function kindFor(value, index){
+  const text = String(value);
+  if(text === "none" || text === "trans") return "empty";
+  if(state.layer === "automouse" && gestureIndex.has(index)) return "mouse gesture";
+  if(/BT|Bootloader/.test(text)) return "sys";
+  if(/Ctrl|Alt|Cmd|Win|Shift|Primary|Option|Sub/.test(text)) return "mod";
+  if(/Click|MB|Gesture|Pan|return text|return Win/.test(text)) return "mouse";
+  if(/Home|Pg|Up|Down|Left|Right|Undo|Cut|Copy|Paste|Redo|Nav|Bspc|Esc/.test(text)) return "nav";
+  if(/KP|^[0-9]$|#|;|'|SQT|\[|\]|\+|\*|\//.test(text)) return "num";
+  return "alpha";
+}
+
+function bindingInfo(value, index){
+  const text = String(value);
+  if(state.layer === "automouse" && index === 29) return "Tap: MB3. Hold: G_PAN layer. Ball movement becomes pan/scroll.";
+  if(state.layer === "automouse" && index === 30) return state.host === "mac" ? "Tap: MB4 Back. Hold: D_MAC layer. Ball right Paste, left Copy, up Undo, down Redo." : "Tap: MB4 Back. Hold: D_WIN layer. Ball right Paste, left Copy, up Undo, down Redo.";
+  if(state.layer === "automouse" && index === 31) return state.host === "mac" ? "Tap: MB5 Forward. Hold: M_MAC layer. Ball right Next Tab, left Prev Tab, up Overview, down Desktop." : "Tap: MB5 Forward. Hold: M_WIN layer. Ball right Next Tab, left Prev Tab, up Task View, down Desktop.";
+  if(index === 37 && /英数/.test(text)) return "Tap sends Eisu / LANG2. On Base/Num/Nav it can also hold Fn where defined. In AutoMouse it returns to text input.";
+  if(index === 41 && /かな/.test(text)) return "Tap sends Kana / LANG1. In AutoMouse it explicitly returns to text input.";
+  if(index === 42 && /Screenshot|Snipping/.test(text)) return state.host === "mac" ? "Mac screenshot UI: Shift + Command + 5." : "Windows snipping UI: Win + Shift + S.";
+  if(/hold/.test(text)) return "Layer-tap or mod-tap behavior. Tap sends the first label; hold activates the secondary label.";
+  return text === "none" ? "No binding on this layer." : "Direct binding on this layer.";
+}
+
+function getKeys(){
+  return layers[state.layer][state.host] || layers[state.layer].mac;
+}
+
+function renderButtons(){
+  document.querySelectorAll("button.host").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.host === state.host);
+    btn.onclick = () => { state.host = btn.dataset.host; renderAll(); };
+  });
+  const layerButtons = document.getElementById("layerButtons");
+  layerButtons.querySelectorAll("button.layer").forEach(el=>el.remove());
+  layerOrder.forEach(id=>{
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "layer" + (state.layer === id ? " active" : "");
+    btn.textContent = layers[id].name;
+    btn.onclick = () => { state.layer = id; state.selected = id === "automouse" ? 30 : 30; renderAll(); };
+    layerButtons.appendChild(btn);
+  });
+  document.getElementById("gestureFocus").classList.toggle("active", state.gestureFocus);
+  document.getElementById("gestureFocus").onclick = () => { state.gestureFocus = true; state.layer = "automouse"; state.selected = 30; renderAll(); };
+  document.getElementById("clearFocus").onclick = () => { state.gestureFocus = false; renderAll(); };
+}
+
+function renderBoard(){
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  const keys = getKeys();
+  physical.forEach(([idx,x,y,rot])=>{
+    const value = keys[idx] || "none";
+    const label = splitLabel(value);
+    const key = document.createElement("button");
+    key.type = "button";
+    key.className = "key " + kindFor(value, idx);
+    if(state.layer === "automouse" && gestureIndex.has(idx)) key.classList.add("gesture");
+    if(state.selected === idx) key.classList.add("selected");
+    if(state.host === "win" && hostDiffIndices.has(idx)) key.classList.add("host-diff");
+    if(state.gestureFocus && state.layer === "automouse" && !gestureIndex.has(idx)) key.style.opacity = "0.36";
+    key.style.left = (x / boardSize.w * 100) + "%";
+    key.style.top = (y / boardSize.h * 100) + "%";
+    key.style.width = (keySize.w / boardSize.w * 100) + "%";
+    key.style.height = (keySize.h / boardSize.h * 100) + "%";
+    key.style.transform = `rotate(${rot}deg)`;
+    key.innerHTML = `<span class="idx">K${idx}</span><span class="main">${escapeHtml(label.main)}</span><span class="sub">${escapeHtml(label.sub)}</span>`;
+    key.onclick = () => { state.selected = idx; renderDetail(); renderBoard(); };
+    board.appendChild(key);
+  });
+  const trackball = document.createElement("div");
+  trackball.className = "trackball";
+  trackball.textContent = "Trackball / AutoMouse";
+  board.appendChild(trackball);
+  const encoder = document.createElement("div");
+  encoder.className = "encoder";
+  encoder.textContent = "Encoder scroll";
+  board.appendChild(encoder);
+}
+
+function renderDetail(){
+  const keys = getKeys();
+  const value = keys[state.selected] || "none";
+  const label = splitLabel(value);
+  const detail = document.getElementById("detail");
+  detail.innerHTML = `
+    <h2>K${state.selected} ${escapeHtml(label.main)}</h2>
+    <div class="detail-row"><b>Layer</b><span>${escapeHtml(layers[state.layer].name)} / ${state.host === "mac" ? "Mac" : "Windows"}</span></div>
+    <div class="detail-row"><b>Sub</b><span>${escapeHtml(label.sub || "-")}</span></div>
+    <div class="detail-row"><b>Class</b><span>${escapeHtml(kindFor(value, state.selected).replace(" gesture"," / gesture"))}</span></div>
+    <div class="detail-row"><b>Behavior</b><span>${escapeHtml(bindingInfo(value, state.selected))}</span></div>
+  `;
+  document.getElementById("hostSummary").textContent = state.host === "mac"
+    ? "BT0/BT1: Primary shortcut is Command. Base rightmost is Shift+Command+5."
+    : "BT2-BT4: Primary shortcut is Control. Base rightmost is Win+Shift+S.";
+}
+
+function renderGestures(){
+  const grid = document.getElementById("gestureGrid");
+  grid.innerHTML = "";
+  ["D","M","G"].forEach(key=>{
+    const g = gestures[state.host][key];
+    const card = document.createElement("article");
+    card.className = "gesture-card";
+    card.innerHTML = `
+      <h3>${escapeHtml(g.title)}</h3>
+      <p>${escapeHtml(g.note)}</p>
+      <div class="dpad">
+        <div></div><div class="dir"><small>Ball up</small>${escapeHtml(g.up)}</div><div></div>
+        <div class="dir"><small>Ball left</small>${escapeHtml(g.left)}</div><div class="tap"><small>Tap / no movement</small>${escapeHtml(g.tap)}</div><div class="dir"><small>Ball right</small>${escapeHtml(g.right)}</div>
+        <div></div><div class="dir"><small>Ball down</small>${escapeHtml(g.down)}</div><div></div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function renderMatrix(){
+  const matrix = document.getElementById("layerMatrix");
+  matrix.innerHTML = "";
+  layerOrder.forEach(id=>{
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "mini";
+    item.innerHTML = `<b>${escapeHtml(layers[id].name)}</b><span>${escapeHtml(layers[id].overview)}</span><span>${escapeHtml(layers[id].sensor)}</span>`;
+    item.onclick = () => { state.layer = id; state.selected = id === "automouse" ? 30 : 30; renderAll(); };
+    matrix.appendChild(item);
+  });
+}
+
+function renderHeader(){
+  const layer = layers[state.layer];
+  document.getElementById("layerTitle").textContent = `${layer.name} / ${state.host === "mac" ? "Mac" : "Windows"}`;
+  document.getElementById("layerNote").textContent = `${layer.note} Sensor: ${layer.sensor}.`;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+}
+
+function renderAll(){
+  renderButtons();
+  renderHeader();
+  renderBoard();
+  renderDetail();
+  renderGestures();
+  renderMatrix();
+}
+
+renderAll();
+</script>
+</body>
+</html>

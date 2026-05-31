@@ -1,5 +1,7 @@
 #include "Cygnus.dtsi"
 #include <input/processors.dtsi>
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
 
 &default_transform {
     col-offset = <6>;

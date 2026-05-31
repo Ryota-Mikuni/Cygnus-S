@@ -22,7 +22,8 @@
         compatible = "cygnus,input-processor-gesture";
         #input-processor-cells = <0>;
         tick = <18>;
-        wait-ms = <20>;
+        // Avoid repeated copy/paste/undo firing during one held gesture.
+        wait-ms = <500>;
         tap-ms = <20>;
         // Order required by src/cygnus_gesture_processor.c: right, left, up, down.
         bindings = <&kp LG(V) &kp LG(C) &kp LG(Z) &kp LS(LG(Z))>;
@@ -32,7 +33,7 @@
         compatible = "cygnus,input-processor-gesture";
         #input-processor-cells = <0>;
         tick = <18>;
-        wait-ms = <20>;
+        wait-ms = <500>;
         tap-ms = <20>;
         bindings = <&kp LC(V) &kp LC(C) &kp LC(Z) &kp LC(Y)>;
     };
@@ -41,7 +42,7 @@
         compatible = "cygnus,input-processor-gesture";
         #input-processor-cells = <0>;
         tick = <18>;
-        wait-ms = <20>;
+        wait-ms = <500>;
         tap-ms = <20>;
         bindings = <&kp LC(TAB) &kp LC(LS(TAB)) &kp LC(UP_ARROW) &kp F11>;
     };
@@ -50,7 +51,7 @@
         compatible = "cygnus,input-processor-gesture";
         #input-processor-cells = <0>;
         tick = <18>;
-        wait-ms = <20>;
+        wait-ms = <500>;
         tap-ms = <20>;
         bindings = <&kp LC(TAB) &kp LC(LS(TAB)) &kp LG(TAB) &kp LG(D)>;
     };

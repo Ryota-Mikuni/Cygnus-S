@@ -1,11 +1,18 @@
 # Codex Handoff: Cygnus-S Keymap / Host-Aware AutoMouse Gesture Work
 
-Last updated: 2026-05-31 JST  
-Repository: `Ryota-Mikuni/Cygnus-S`  
-Current HEAD observed in this session: `162cb49670aa6d2664d823cb24d47b42f8c6bad3`  
-Latest HEAD message observed: `Enable ZMK pointing on right half for gesture processors`
+Last updated: 2026-06-01 JST
+Repository: `Ryota-Mikuni/Cygnus-S`
+Build-green baseline before this review: `7aaa9132aa15ace330384b4abd96a33e993b0eb2`
+Latest successful workflow observed before this review: `26713860712`
 
-This document is intended as a continuation brief for Codex. It explains the design goal, current implementation state, likely reasons for current GitHub Actions failure, and a prioritized plan to get the build green before continuing feature work.
+This document is intended as a continuation brief for Codex. It explains the design goal, current implementation state, known caveats, and the validation path for firmware artifacts.
+
+2026-06-01 review note:
+
+- The previous failing right-half build was fixed by adding `<behaviors.dtsi>` and `<dt-bindings/zmk/keys.h>` to `config/boards/shields/Test/Cygnus_R.overlay`.
+- `Cygnus_R`, `Cygnus_L`, `settings_reset`, and merged `firmware` artifact all succeeded on run `26713860712`.
+- Gesture debounce was tuned from the old 20 ms setting toward a practical `wait-ms = <500>` to reduce repeated shortcut firing while the user holds D/M/G and keeps rolling the trackball.
+- This is still not a true release-time one-shot gesture engine. Hardware testing must confirm whether `500 ms` feels right.
 
 ---
 
@@ -257,7 +264,7 @@ cyg_d_mac: cyg_d_mac {
     compatible = "cygnus,input-processor-gesture";
     #input-processor-cells = <0>;
     tick = <18>;
-    wait-ms = <20>;
+    wait-ms = <500>;
     tap-ms = <20>;
     // Order required by src/cygnus_gesture_processor.c: right, left, up, down.
     bindings = <&kp LG(V) &kp LG(C) &kp LG(Z) &kp LS(LG(Z))>;
@@ -347,27 +354,26 @@ This is a continuous threshold-triggering model, not release-based.
 
 ## 4. Current GitHub Actions status
 
-The user reports the build is still failing.
+The build was green at commit `7aaa9132aa15ace330384b4abd96a33e993b0eb2`.
 
-In this ChatGPT environment, latest workflow runs for current commits were not available through the connector. Older run `26354623657` is from commit `95ec9cad...` and was successful; do not use it as evidence for the current state. That old log checks out commit `95ec9cad1f27dd724c6deb13eaecc7e408d3ab94`, not current HEAD.
+Successful run observed:
 
-Codex should first inspect the current failing Actions log directly.
-
-Recommended commands:
-
-```bash
-gh run list --repo Ryota-Mikuni/Cygnus-S --limit 20
-gh run view <RUN_ID> --repo Ryota-Mikuni/Cygnus-S --log-failed
+```text
+Run: 26713860712
+Branch: main
+Conclusion: success
+Jobs:
+- Fetch Build Keyboards: success
+- Build (seeeduino_xiao_ble, Cygnus_L rgbled_adapter): success
+- Build (seeeduino_xiao_ble, Cygnus_R rgbled_adapter, studio-rpc-usb-uart): success
+- Build (seeeduino_xiao_ble, settings_reset): success
+- Merge Output Artifacts: success
+Artifact: firmware
 ```
 
-If log output is too large:
+The previous root cause was right-half devicetree preprocessing: `Cygnus_R.overlay` used `&kp`, `LG()`, `LC()`, `TAB`, and related key definitions inside gesture input-processor bindings without including the behavior and key binding headers. That is now fixed.
 
-```bash
-gh run view <RUN_ID> --repo Ryota-Mikuni/Cygnus-S --json jobs
-gh run view <RUN_ID> --repo Ryota-Mikuni/Cygnus-S --job <JOB_ID> --log
-```
-
-Focus on the first actual compile/devicetree error, not on follow-on failures.
+For any future failure, still inspect the latest run and first real compile/devicetree/Kconfig error before changing logic.
 
 ---
 
@@ -606,27 +612,22 @@ If settings_reset is the only failure, do not overfit the Cygnus_R implementatio
 
 ---
 
-## 7. Recommended immediate Codex workflow
+## 7. Recommended validation workflow
 
-### Step 1: Get the actual failing log
+### Step 1: Confirm the latest build
 
-Run:
+Check the newest GitHub Actions run for `main` before trusting a firmware artifact.
 
-```bash
-gh run list --repo Ryota-Mikuni/Cygnus-S --limit 20
-gh run view <latest_failed_run_id> --repo Ryota-Mikuni/Cygnus-S --log-failed
-```
-
-Identify which matrix job failed:
+All of these must be green:
 
 - `Cygnus_R rgbled_adapter, studio-rpc-usb-uart`
 - `Cygnus_L rgbled_adapter`
 - `settings_reset`
-- `Fetch Build Matrix`
+- `Merge Output Artifacts`
 
-Do not modify anything until the exact failing job and first error are known.
+If any job fails, inspect the exact failing job and first error before changing more logic.
 
-### Step 2: Classify the first error
+### Step 2: Classify a future first error
 
 Use this table.
 
@@ -642,7 +643,7 @@ Use this table.
 
 ### Step 3: Prefer the smallest build-green fix
 
-The current priority is build stability. Do not implement more gesture features until Actions is green.
+If a future build breaks, restore build stability first. Do not add gesture features while Actions is red.
 
 ### Step 4: After build green, test semantics
 
@@ -690,17 +691,13 @@ Release D
 Layer exits
 ```
 
-Because current `wait-ms = <20>`, repeated firing is likely if the user continues moving the ball.
-
-Recommended after build green:
-
-Set `wait-ms` higher, for example:
+Current mitigation:
 
 ```dts
 wait-ms = <500>;
 ```
 
-or implement true one-shot behavior in `src/cygnus_gesture_processor.c`.
+This reduces repeated firing during one held gesture, but a very long continuous hold-and-roll can still fire again after the debounce window. If hardware testing shows accidental repeats, implement true one-shot behavior in `src/cygnus_gesture_processor.c`.
 
 True one-shot implementation idea:
 
@@ -747,12 +744,9 @@ Do not assume they are active. Current root `CMakeLists.txt` does not build them
 ## 10. Suggested cleanup after build green
 
 1. Delete abandoned custom behavior files under `config/src`, `config/include`, and `config/dts/bindings/input_processors/zmk,input-processor-cygnus-gesture.yaml`.
-2. Rename visualizer from v6/v7 wording to v8 if keeping the current layer-specific implementation.
-3. Update docs visualizer text:
-   - It should no longer say “custom behavior + input processor”.
-   - It should say “hold-tap activates internal gesture layers; layer-specific input processors fire direction shortcuts.”
-4. Tune `tick` and `wait-ms`.
-5. Decide whether Mac Mission Control / Desktop mappings should be:
+2. Keep the visualizer wording aligned with the v8 implementation: hold-tap activates internal gesture layers, and layer-specific input processors fire direction shortcuts.
+3. Tune `tick` and `wait-ms` after real hardware use if gestures feel too sensitive or too delayed.
+4. Decide whether Mac Mission Control / Desktop mappings should be:
    - native macOS shortcuts,
    - app-specific shortcuts,
    - Rectangle/Raycast/BetterTouchTool shortcuts.

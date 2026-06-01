@@ -7,6 +7,9 @@
 // - AutoMouse is mouse/gesture mode; unassigned keys fall through as base text and return to text.
 // - N/right-click/D/M positions use hold-tap for gesture families.
 
+// Match the original Cygnus-S encoder scroll strength; ZMK's default is too small on macOS.
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 120
+
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>

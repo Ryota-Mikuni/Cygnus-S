@@ -6,7 +6,7 @@ config CYGNUS_GESTURE_PROCESSOR
       Enables the Cygnus layer-specific trackball gesture input processor.
 
 config CYGNUS_GESTURE
-    bool "Cygnus D/M/G trackball gesture support"
+    bool "Cygnus N/D/M trackball gesture support"
     default y
     depends on ZMK_MOUSE
     select CYGNUS_GESTURE_PROCESSOR

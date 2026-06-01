@@ -5,7 +5,7 @@
 // - Encoder is the primary scroll input.
 // - Trackball keeps AutoMouse on Layer 4.
 // - AutoMouse is mouse/gesture mode: no text typing; Kana/Muhenkan explicitly returns to text.
-// - D/M/G physical positions use hold-tap to activate internal gesture layers.
+// - N/right-click/D/M positions use hold-tap for gesture families.
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
@@ -23,9 +23,13 @@
 #define WIN_AMOUSE 8
 #define D_MAC 9
 #define M_MAC 10
-#define G_PAN 11
+#define N_PAN 11
 #define D_WIN 12
 #define M_WIN 13
+#define WIN_NUM 14
+#define WIN_FN 15
+#define R_MAC 16
+#define R_WIN 17
 
 &lt {
     tapping-term-ms = <200>;
@@ -46,6 +50,16 @@
         win_automouse {
             if-layers = <WIN AMOUSE>;
             then-layer = <WIN_AMOUSE>;
+        };
+
+        win_num {
+            if-layers = <WIN NUM>;
+            then-layer = <WIN_NUM>;
+        };
+
+        win_fn {
+            if-layers = <WIN FN>;
+            then-layer = <WIN_FN>;
         };
     };
 
@@ -194,9 +208,9 @@
             display-name = "Num";
             sensor-bindings = <&scroll_up_down>;
             bindings = <
-                    &kp RBKT  &kp HASH  &kp N7  &kp N8  &kp N9  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_PLUS  &kp KP_MINUS
-                    &kp SEMI  &kp LS(N7)  &kp N4  &kp N5  &kp N6  &kp C_MUTE  &kp SQT  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_DIVIDE
-                    &kp LBKT  &kp N0  &kp N1  &kp N2  &kp N3  &none  &kp N0  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp SLASH  &kp KP_DOT
+                    &kp SEMI  &kp LBKT  &kp HASH  &kp DLLR  &kp PRCNT  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_PLUS  &kp KP_MINUS
+                    &kp RBKT  &kp LS(N7)  &kp EXCL  &kp LS(MINUS)  &kp LS(SEMI)  &kp C_MUTE  &kp SQT  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_DIVIDE
+                    &kp BSLH  &kp LS(INT1)  &kp LS(N6)  &kp INT3  &kp LS(INT3)  &none  &kp KP_NUMBER_0  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp SLASH  &kp KP_DOT
                     &kp LCTRL  &kp LALT  &kp LGUI  &lt FN LANG2  &mt LSHIFT SPACE  &none  &lt NAV_MAC BSPC  &kp LANG1  &kp ESCAPE
             >;
         };
@@ -217,8 +231,8 @@
             sensor-bindings = <&scroll_up_down>;
             bindings = <
                     &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
-                    &none  &none  &none  &none  &none  &kp C_MUTE  &none  &none  &mkp MB1  &mkp MB3  &mkp MB2  &none
-                    &none  &none  &none  &none  &none  &none  &none  &mg G_PAN MB3  &mg D_MAC MB4  &mg M_MAC MB5  &none  &none
+                    &none  &none  &none  &none  &none  &kp C_MUTE  &none  &none  &mkp MB1  &mg N_PAN MB3  &mg R_MAC MB2  &none
+                    &none  &none  &none  &none  &none  &none  &none  &none  &mg D_MAC MB4  &mg M_MAC MB5  &none  &none
                     &none  &none  &none  &text_return_mac_en  &none  &none  &none  &text_return_mac  &kp ESCAPE
             >;
         };
@@ -261,8 +275,8 @@
             sensor-bindings = <&scroll_up_down>;
             bindings = <
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &mg G_PAN MB3  &mg D_WIN MB4  &mg M_WIN MB5  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &mg R_WIN MB2  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &mg D_WIN MB4  &mg M_WIN MB5  &trans  &trans
                     &trans  &trans  &trans  &text_return_win_en  &trans  &trans  &trans  &text_return_win  &kp ESCAPE
             >;
         };
@@ -289,8 +303,8 @@
             >;
         };
 
-        g_pan_layer { // Layer 11: internal G pan
-            display-name = "G-Pan";
+        n_pan_layer { // Layer 11: internal N pan
+            display-name = "N-Pan";
             sensor-bindings = <&scroll_up_down>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
@@ -313,6 +327,50 @@
 
         m_win_gesture_layer { // Layer 13: internal M gesture, Windows
             display-name = "M-Win";
+            sensor-bindings = <&scroll_up_down>;
+            bindings = <
+                    &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none
+            >;
+        };
+
+        win_num_override_layer { // Layer 14: Windows Num host override
+            display-name = "WinNum";
+            sensor-bindings = <&scroll_up_down>;
+            bindings = <
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &kp LGUI  &kp LALT  &kp LCTRL  &trans  &trans  &trans  &lt NAV_WIN BSPC  &trans  &trans
+            >;
+        };
+
+        win_fn_override_layer { // Layer 15: Windows Fn host override
+            display-name = "WinFn";
+            sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN>;
+            bindings = <
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &kp LGUI  &kp LALT  &kp LCTRL  &trans  &trans  &trans  &lt NAV_WIN BSPC  &trans  &trans
+            >;
+        };
+
+        r_mac_gesture_layer { // Layer 16: internal right-click gesture, Mac
+            display-name = "R-Mac";
+            sensor-bindings = <&scroll_up_down>;
+            bindings = <
+                    &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none
+            >;
+        };
+
+        r_win_gesture_layer { // Layer 17: internal right-click gesture, Windows
+            display-name = "R-Win";
             sensor-bindings = <&scroll_up_down>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none

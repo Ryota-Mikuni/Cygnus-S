@@ -3,4 +3,4 @@ config CYGNUS_GESTURE
     default y
     depends on ZMK_MOUSE
     help
-      Enables the Cygnus D/M/G trackball gesture behavior and input processor.
+      Enables the Cygnus N/D/M trackball gesture behavior and input processor.

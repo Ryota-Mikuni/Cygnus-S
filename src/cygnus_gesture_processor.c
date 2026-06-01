@@ -37,31 +37,60 @@ struct cygnus_gesture_processor_data {
     int16_t x;
     int16_t y;
     int64_t last_triggered_at;
+    const struct device *dev;
+    struct k_work_delayable press_work;
+    struct k_work_delayable release_work;
+    enum cygnus_gesture_direction pending_direction;
+    uint32_t pending_position;
+    bool pending;
 };
 
-static int tap_binding(const struct cygnus_gesture_processor_config *cfg,
-                       struct zmk_input_processor_state *state,
-                       enum cygnus_gesture_direction direction) {
+static int invoke_pending_binding(const struct cygnus_gesture_processor_config *cfg,
+                                  struct cygnus_gesture_processor_data *data, bool pressed) {
+    enum cygnus_gesture_direction direction = data->pending_direction;
     const struct zmk_behavior_binding *binding = &cfg->bindings[direction];
     struct zmk_behavior_binding_event event = {
-        .position = ZMK_VIRTUAL_KEY_POSITION_BEHAVIOR_INPUT_PROCESSOR(state->input_device_index,
-                                                                       cfg->index),
+        .position = data->pending_position,
         .timestamp = k_uptime_get(),
 #if IS_ENABLED(CONFIG_ZMK_SPLIT)
         .source = ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
 #endif
     };
 
-    int ret = zmk_behavior_invoke_binding(binding, event, true);
+    return zmk_behavior_invoke_binding(binding, event, pressed);
+}
+
+static void release_work_handler(struct k_work *work) {
+    struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+    struct cygnus_gesture_processor_data *data =
+        CONTAINER_OF(dwork, struct cygnus_gesture_processor_data, release_work);
+
+    if (!data->pending || data->dev == NULL) {
+        return;
+    }
+
+    const struct cygnus_gesture_processor_config *cfg = data->dev->config;
+    invoke_pending_binding(cfg, data, false);
+    data->pending = false;
+}
+
+static void press_work_handler(struct k_work *work) {
+    struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+    struct cygnus_gesture_processor_data *data =
+        CONTAINER_OF(dwork, struct cygnus_gesture_processor_data, press_work);
+
+    if (!data->pending || data->dev == NULL) {
+        return;
+    }
+
+    const struct cygnus_gesture_processor_config *cfg = data->dev->config;
+    int ret = invoke_pending_binding(cfg, data, true);
     if (ret < 0) {
-        return ret;
+        data->pending = false;
+        return;
     }
 
-    if (cfg->tap_ms > 0) {
-        k_sleep(K_MSEC(cfg->tap_ms));
-    }
-
-    return zmk_behavior_invoke_binding(binding, event, false);
+    k_work_schedule(&data->release_work, K_MSEC(MAX(cfg->tap_ms, 0)));
 }
 
 static int cygnus_gesture_processor_handle_event(const struct device *dev,
@@ -115,10 +144,15 @@ static int cygnus_gesture_processor_handle_event(const struct device *dev,
     data->y = 0;
     data->last_triggered_at = now;
 
-    int ret = tap_binding(cfg, state, direction);
-    if (ret < 0) {
-        return ret;
+    if (data->pending) {
+        return ZMK_INPUT_PROC_STOP;
     }
+
+    data->pending_direction = direction;
+    data->pending_position = ZMK_VIRTUAL_KEY_POSITION_BEHAVIOR_INPUT_PROCESSOR(
+        state->input_device_index, cfg->index);
+    data->pending = true;
+    k_work_schedule(&data->press_work, K_NO_WAIT);
 
     return ZMK_INPUT_PROC_STOP;
 }
@@ -127,7 +161,15 @@ static struct zmk_input_processor_driver_api cygnus_gesture_processor_api = {
     .handle_event = cygnus_gesture_processor_handle_event,
 };
 
-static int cygnus_gesture_processor_init(const struct device *dev) { return 0; }
+static int cygnus_gesture_processor_init(const struct device *dev) {
+    struct cygnus_gesture_processor_data *data = dev->data;
+
+    data->dev = dev;
+    k_work_init_delayable(&data->press_work, press_work_handler);
+    k_work_init_delayable(&data->release_work, release_work_handler);
+
+    return 0;
+}
 
 #define CYGNUS_GESTURE_PROCESSOR_INST(n)                                                           \
     static const struct zmk_behavior_binding cygnus_gesture_bindings_##n[] = {                     \

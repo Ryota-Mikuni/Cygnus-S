@@ -30,6 +30,7 @@
 #define WIN_FN 15
 #define R_MAC 16
 #define R_WIN 17
+#define SNIPE 18
 
 &lt {
     tapping-term-ms = <200>;
@@ -231,7 +232,7 @@
             sensor-bindings = <&scroll_up_down>;
             bindings = <
                     &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
-                    &none  &none  &none  &none  &none  &kp C_MUTE  &none  &none  &mkp MB1  &mg N_PAN MB3  &mg R_MAC MB2  &none
+                    &none  &none  &none  &mo SNIPE  &none  &kp C_MUTE  &none  &none  &mkp MB1  &mg N_PAN MB3  &mg R_MAC MB2  &none
                     &none  &none  &none  &none  &none  &none  &none  &none  &mg D_MAC MB4  &mg M_MAC MB5  &none  &none
                     &none  &none  &none  &text_return_mac_en  &none  &none  &none  &text_return_mac  &kp ESCAPE
             >;
@@ -377,6 +378,17 @@
                     &none &none &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none
+            >;
+        };
+
+        snipe_layer { // Layer 18: internal pointer slow mode
+            display-name = "Slow";
+            sensor-bindings = <&scroll_up_down>;
+            bindings = <
+                    &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                    &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                    &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                    &trans &trans &trans &trans &trans &trans &trans &trans &trans
             >;
         };
     };

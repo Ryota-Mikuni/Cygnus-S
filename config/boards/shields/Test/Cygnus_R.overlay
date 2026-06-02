@@ -1,6 +1,7 @@
 #include "Cygnus.dtsi"
 #include <input/processors.dtsi>
 #include <behaviors.dtsi>
+#include <dt-bindings/zmk/input_transform.h>
 #include <dt-bindings/zmk/keys.h>
 
 &default_transform {
@@ -88,9 +89,11 @@
             input-processors = <&cyg_m_mac>;
         };
 
-        n_pan_gesture {
+        n_pan_mac_gesture {
             layers = <11>;
-            input-processors = <&zip_xy_to_scroll_mapper>;
+            input-processors =
+                <&zip_xy_to_scroll_mapper>,
+                <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>;
         };
 
         d_win_gesture {
@@ -111,6 +114,11 @@
         r_win_gesture {
             layers = <17>;
             input-processors = <&cyg_r_win>;
+        };
+
+        n_pan_win_gesture {
+            layers = <19>;
+            input-processors = <&zip_xy_to_scroll_mapper>;
         };
     };
 };

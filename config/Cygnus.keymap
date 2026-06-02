@@ -3,6 +3,7 @@
 // - BT0/BT1: Mac host profile.
 // - BT2/BT3/BT4: Windows host profile via overlay layer.
 // - Encoder is the primary scroll input; Mac host layers invert vertical scroll in firmware.
+// - N-hold pan is host-aware so Mac can reverse vertical scroll without changing Windows.
 // - Trackball keeps AutoMouse on Layer 4.
 // - AutoMouse is mouse/gesture mode; unassigned keys fall through as base text and return to text.
 // - N/right-click/D/M positions use hold-tap for gesture families.
@@ -34,6 +35,7 @@
 #define R_MAC 16
 #define R_WIN 17
 #define SNIPE 18
+#define N_PAN_WIN 19
 
 &lt {
     tapping-term-ms = <200>;
@@ -367,7 +369,7 @@
             sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &am_key_win Q  &am_key_win L  &am_key_win U  &am_key_win COMMA  &am_key_win DOT  &am_key_win F  &am_key_win W  &am_key_win R  &am_key_win Y  &am_key_win P
-                    &am_key_win E  &am_key_win I  &am_key_win A  &trans  &am_key_win MINUS  &trans  &am_key_win LS(N8)  &am_key_win K  &trans  &trans  &mg R_WIN MB2  &am_key_win H
+                    &am_key_win E  &am_key_win I  &am_key_win A  &trans  &am_key_win MINUS  &trans  &am_key_win LS(N8)  &am_key_win K  &trans  &mg N_PAN_WIN MB3  &mg R_WIN MB2  &am_key_win H
                     &am_key_win J  &am_key_win X  &am_key_win C  &am_key_win V  &am_key_win QMARK  &am_key_win TAB  &am_key_win LS(N9)  &am_key_win G  &mg D_WIN MB4  &mg M_WIN MB5  &am_key_win Z  &am_key_win B
                     &am_key_win LGUI  &am_key_win LALT  &am_key_win LCTRL  &am_lt_win FN LANG2  &am_mt_win LSHIFT SPACE  &am_lt_win NUM ENTER  &am_lt_win NAV_WIN BSPC  &am_key_win LANG1  &kp ESCAPE
             >;
@@ -395,9 +397,9 @@
             >;
         };
 
-        n_pan_layer { // Layer 11: internal N pan
+        n_pan_layer { // Layer 11: internal N pan, Mac
             display-name = "N-Pan";
-            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
@@ -480,6 +482,17 @@
                     &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
                     &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
                     &trans &trans &trans &trans &trans &trans &trans &trans &trans
+            >;
+        };
+
+        n_pan_win_layer { // Layer 19: internal N pan, Windows
+            display-name = "N-PanWin";
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            bindings = <
+                    &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none &none &none &none
+                    &none &none &none &none &none &none &none &none &none
             >;
         };
     };

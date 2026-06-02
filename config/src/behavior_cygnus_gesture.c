@@ -28,6 +28,8 @@ struct cygnus_gesture_config {
     const struct zmk_behavior_binding *m_win_bindings;
     const struct zmk_behavior_binding *g_mac_bindings;
     const struct zmk_behavior_binding *g_win_bindings;
+    const struct zmk_behavior_binding *r_mac_bindings;
+    const struct zmk_behavior_binding *r_win_bindings;
 };
 
 static int invoke_tap(const struct zmk_behavior_binding *binding, uint32_t position) {
@@ -57,6 +59,8 @@ static const struct zmk_behavior_binding *binding_table_for(const struct cygnus_
         return windows ? cfg->m_win_bindings : cfg->m_mac_bindings;
     case CYG_GESTURE_G:
         return windows ? cfg->g_win_bindings : cfg->g_mac_bindings;
+    case CYG_GESTURE_R:
+        return windows ? cfg->r_win_bindings : cfg->r_mac_bindings;
     default:
         return NULL;
     }
@@ -134,6 +138,8 @@ static const struct behavior_driver_api cygnus_gesture_driver_api = {
 #define CYG_M_WIN_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, m_win_bindings)
 #define CYG_G_MAC_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, g_mac_bindings)
 #define CYG_G_WIN_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, g_win_bindings)
+#define CYG_R_MAC_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, r_mac_bindings)
+#define CYG_R_WIN_BINDING(idx, inst) CYG_BINDING_FROM_PROP(idx, inst, r_win_bindings)
 
 #define CYG_ASSERT_BINDINGS_LEN(n, prop)                                                           \
     BUILD_ASSERT(DT_INST_PROP_LEN(n, prop) == CYGNUS_GESTURE_BINDING_COUNT,                        \
@@ -152,12 +158,18 @@ static const struct behavior_driver_api cygnus_gesture_driver_api = {
         LISTIFY(DT_INST_PROP_LEN(n, g_mac_bindings), CYG_G_MAC_BINDING, (, ), n)};                 \
     static const struct zmk_behavior_binding cyg_g_win_bindings_##n[] = {                          \
         LISTIFY(DT_INST_PROP_LEN(n, g_win_bindings), CYG_G_WIN_BINDING, (, ), n)};                 \
+    static const struct zmk_behavior_binding cyg_r_mac_bindings_##n[] = {                          \
+        LISTIFY(DT_INST_PROP_LEN(n, r_mac_bindings), CYG_R_MAC_BINDING, (, ), n)};                 \
+    static const struct zmk_behavior_binding cyg_r_win_bindings_##n[] = {                          \
+        LISTIFY(DT_INST_PROP_LEN(n, r_win_bindings), CYG_R_WIN_BINDING, (, ), n)};                 \
     CYG_ASSERT_BINDINGS_LEN(n, d_mac_bindings);                                                    \
     CYG_ASSERT_BINDINGS_LEN(n, d_win_bindings);                                                    \
     CYG_ASSERT_BINDINGS_LEN(n, m_mac_bindings);                                                    \
     CYG_ASSERT_BINDINGS_LEN(n, m_win_bindings);                                                    \
     CYG_ASSERT_BINDINGS_LEN(n, g_mac_bindings);                                                    \
     CYG_ASSERT_BINDINGS_LEN(n, g_win_bindings);                                                    \
+    CYG_ASSERT_BINDINGS_LEN(n, r_mac_bindings);                                                    \
+    CYG_ASSERT_BINDINGS_LEN(n, r_win_bindings);                                                    \
     static const struct cygnus_gesture_config cyg_config_##n = {                                   \
         .threshold = DT_INST_PROP(n, threshold),                                                    \
         .ratio_numerator = DT_INST_PROP(n, ratio_numerator),                                       \
@@ -169,6 +181,8 @@ static const struct behavior_driver_api cygnus_gesture_driver_api = {
         .m_win_bindings = cyg_m_win_bindings_##n,                                                  \
         .g_mac_bindings = cyg_g_mac_bindings_##n,                                                  \
         .g_win_bindings = cyg_g_win_bindings_##n,                                                  \
+        .r_mac_bindings = cyg_r_mac_bindings_##n,                                                  \
+        .r_win_bindings = cyg_r_win_bindings_##n,                                                  \
     };                                                                                             \
     BEHAVIOR_DT_INST_DEFINE(n, NULL, NULL, NULL, &cyg_config_##n, POST_KERNEL,                     \
                             CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &cygnus_gesture_driver_api);

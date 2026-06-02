@@ -17,10 +17,6 @@
             ;
 };
 
-&{/behaviors/mouse_gesture} {
-    hold-while-undecided;
-};
-
 / {
     cyg_d_mac: cyg_d_mac {
         compatible = "cygnus,input-processor-gesture";

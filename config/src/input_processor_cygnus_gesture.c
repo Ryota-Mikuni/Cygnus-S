@@ -4,6 +4,7 @@
 #include <zephyr/input/input.h>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/util.h>
 
 #include <drivers/input_processor.h>
 #include <dt-bindings/zmk/cygnus_gesture.h>
@@ -15,6 +16,11 @@ static int cygnus_gesture_processor_handle_event(const struct device *dev,
                                                  struct input_event *event, uint32_t param1,
                                                  uint32_t param2,
                                                  struct zmk_input_processor_state *state) {
+    ARG_UNUSED(dev);
+    ARG_UNUSED(param1);
+    ARG_UNUSED(param2);
+    ARG_UNUSED(state);
+
     if (!cygnus_gesture_active()) {
         return ZMK_INPUT_PROC_CONTINUE;
     }

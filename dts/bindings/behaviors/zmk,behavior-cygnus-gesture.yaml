@@ -17,27 +17,6 @@ properties:
   win-layer:
     type: int
     required: true
-  d-mac-bindings:
-    type: phandle-array
-    required: true
-  d-win-bindings:
-    type: phandle-array
-    required: true
-  m-mac-bindings:
-    type: phandle-array
-    required: true
-  m-win-bindings:
-    type: phandle-array
-    required: true
-  g-mac-bindings:
-    type: phandle-array
-    required: true
-  g-win-bindings:
-    type: phandle-array
-    required: true
-  r-mac-bindings:
-    type: phandle-array
-    required: true
-  r-win-bindings:
+  bindings:
     type: phandle-array
     required: true

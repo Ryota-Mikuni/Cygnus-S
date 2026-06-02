@@ -97,20 +97,18 @@
             ratio-denominator = <10>;
             win-layer = <WIN>;
 
-            // Binding order: no movement, left, right, up, down.
-            d-mac-bindings = <&mkp MB4 &kp LG(C) &kp LG(V) &kp LG(A) &kp LS(LG(Z))>;
-            d-win-bindings = <&mkp MB4 &kp LC(C) &kp LC(V) &kp LC(A) &kp LC(Y)>;
-
-            m-mac-bindings = <&mkp MB5 &kp LC(LS(TAB)) &kp LC(TAB) &kp LG(T) &kp LG(W)>;
-            m-win-bindings = <&mkp MB5 &kp LC(LS(TAB)) &kp LC(TAB) &kp LC(T) &kp LC(W)>;
-
-            g-mac-bindings = <&mkp MB3 &none &none &none &none>;
-            g-win-bindings = <&mkp MB3 &none &none &none &none>;
-
-            r-mac-bindings =
-                <&mkp MB2 &kp LC(LEFT_ARROW) &kp LC(RIGHT_ARROW) &kp LC(UP_ARROW) &kp LC(DOWN_ARROW)>;
-            r-win-bindings =
-                <&mkp MB2 &kp LC(LG(LEFT_ARROW)) &kp LC(LG(RIGHT_ARROW)) &kp LG(TAB) &kp LG(D)>;
+            // Order by family/host: D Mac, D Win, M Mac, M Win, G Mac, G Win, R Mac, R Win.
+            // Each group is: no movement, left, right, up, down.
+            bindings = <
+                &mkp MB4 &kp LG(C) &kp LG(V) &kp LG(A) &kp LS(LG(Z))
+                &mkp MB4 &kp LC(C) &kp LC(V) &kp LC(A) &kp LC(Y)
+                &mkp MB5 &kp LC(LS(TAB)) &kp LC(TAB) &kp LG(T) &kp LG(W)
+                &mkp MB5 &kp LC(LS(TAB)) &kp LC(TAB) &kp LC(T) &kp LC(W)
+                &mkp MB3 &none &none &none &none
+                &mkp MB3 &none &none &none &none
+                &mkp MB2 &kp LC(LEFT_ARROW) &kp LC(RIGHT_ARROW) &kp LC(UP_ARROW) &kp LC(DOWN_ARROW)
+                &mkp MB2 &kp LC(LG(LEFT_ARROW)) &kp LC(LG(RIGHT_ARROW)) &kp LG(TAB) &kp LG(D)
+            >;
         };
     };
 

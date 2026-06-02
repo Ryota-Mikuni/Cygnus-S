@@ -107,9 +107,11 @@ static int cygnus_gesture_processor_handle_event(const struct device *dev,
     switch (event->code) {
     case INPUT_REL_X:
         data->x += event->value;
+        event->value = 0;
         break;
     case INPUT_REL_Y:
         data->y += event->value;
+        event->value = 0;
         break;
     default:
         return ZMK_INPUT_PROC_CONTINUE;

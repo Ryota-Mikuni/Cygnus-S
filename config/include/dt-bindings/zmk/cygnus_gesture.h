@@ -9,4 +9,3 @@
 #define CYG_GESTURE_D 1
 #define CYG_GESTURE_M 2
 #define CYG_GESTURE_G 3
-#define CYG_GESTURE_R 4

@@ -1,6 +1,6 @@
 config CYGNUS_GESTURE
-    bool "Cygnus N/D/M/R trackball gesture support"
+    bool "Cygnus trackball gesture support"
     default y
     depends on ZMK_MOUSE
     help
-      Enables the host-aware Cygnus trackball gesture behavior and input processor.
+      Enables the Cygnus N/D/M trackball gesture behavior and input processor.

@@ -6,7 +6,7 @@
 // - N-hold pan is host-aware so Mac can reverse vertical scroll without changing Windows.
 // - Trackball keeps AutoMouse on Layer 4.
 // - AutoMouse is mouse/gesture mode; unassigned keys fall through as base text and return to text.
-// - N/right-click/D/M positions use hold-tap for gesture families.
+// - N/right-click/D/M positions use hold-tap for gesture families on Base and AutoMouse.
 
 // Match the original Cygnus-S encoder scroll strength; ZMK's default is too small on macOS.
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 120
@@ -88,6 +88,17 @@
             quick-tap-ms = <0>;
             hold-while-undecided;
             bindings = <&mo>, <&mkp>;
+        };
+
+        kg: key_gesture {
+            compatible = "zmk,behavior-hold-tap";
+            label = "KEY_GESTURE";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <0>;
+            hold-while-undecided;
+            bindings = <&mo>, <&kp>;
         };
     };
 
@@ -281,8 +292,8 @@
             sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
             bindings = <
                     &kp Q  &kp L  &kp U  &kp COMMA  &kp DOT  &kp F  &kp W  &kp R  &kp Y  &kp P
-                    &kp E  &kp I  &kp A  &kp O  &kp MINUS  &kp C_MUTE  &kp LS(N8)  &kp K  &kp T  &kp N  &kp S  &kp H
-                    &kp J  &kp X  &kp C  &kp V  &kp QMARK  &kp TAB  &kp LS(N9)  &kp G  &kp D  &kp M  &kp Z  &kp B
+                    &kp E  &kp I  &kp A  &kp O  &kp MINUS  &kp C_MUTE  &kp LS(N8)  &kp K  &kp T  &kg N_PAN N  &kg R_MAC S  &kp H
+                    &kp J  &kp X  &kp C  &kp V  &kp QMARK  &kp TAB  &kp LS(N9)  &kp G  &kg D_MAC D  &kg M_MAC M  &kp Z  &kp B
                     &kp LCTRL  &kp LALT  &kp LGUI  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &kp LANG1  &ss_mac
             >;
         };
@@ -292,8 +303,8 @@
             sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &kg N_PAN_WIN N  &kg R_WIN S  &trans
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &kg D_WIN D  &kg M_WIN M  &trans  &trans
                     &kp LGUI  &kp LALT  &kp LCTRL  &trans  &trans  &trans  &lt NAV_WIN BSPC  &trans  &ss_win
             >;
         };

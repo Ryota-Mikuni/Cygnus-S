@@ -2,7 +2,6 @@
 #include <input/processors.dtsi>
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/pointing.h>
 
 &default_transform {
     col-offset = <6>;
@@ -18,36 +17,105 @@
             ;
 };
 
+&mg {
+    hold-while-undecided;
+};
+
 / {
-    cyg_trackball_input: cyg_trackball_input {
+    cyg_d_mac: cyg_d_mac {
         compatible = "cygnus,input-processor-gesture";
         #input-processor-cells = <0>;
-        threshold = <18>;
-        ratio-numerator = <13>;
-        ratio-denominator = <10>;
+        tick = <18>;
+        // Avoid repeated copy/paste/select firing during one held gesture.
+        wait-ms = <500>;
         tap-ms = <20>;
-        win-layer = <1>;
-        automouse-layer = <4>;
-        win-automouse-layer = <8>;
-        n-position = <19>;
-        r-position = <20>;
-        d-position = <30>;
-        m-position = <31>;
-        // Binding order: no movement, left, right, up, down.
-        d-mac-bindings = <&none &kp LG(C) &kp LG(V) &kp LG(A) &kp LS(LG(Z))>;
-        d-win-bindings = <&none &kp LC(C) &kp LC(V) &kp LC(A) &kp LC(Y)>;
-        m-mac-bindings = <&none &kp LC(LS(TAB)) &kp LC(TAB) &kp LG(T) &kp LG(W)>;
-        m-win-bindings = <&none &kp LC(LS(TAB)) &kp LC(TAB) &kp LC(T) &kp LC(W)>;
-        r-mac-bindings =
-            <&none &kp LC(LEFT_ARROW) &kp LC(RIGHT_ARROW) &kp LC(UP_ARROW) &kp LC(DOWN_ARROW)>;
-        r-win-bindings =
-            <&none &kp LC(LG(LEFT_ARROW)) &kp LC(LG(RIGHT_ARROW)) &kp LG(TAB) &kp LG(D)>;
+        // Order required by src/cygnus_gesture_processor.c: right, left, up, down.
+        bindings = <&kp LG(V) &kp LG(C) &kp LG(A) &kp LS(LG(Z))>;
+    };
+
+    cyg_d_win: cyg_d_win {
+        compatible = "cygnus,input-processor-gesture";
+        #input-processor-cells = <0>;
+        tick = <18>;
+        wait-ms = <500>;
+        tap-ms = <20>;
+        bindings = <&kp LC(V) &kp LC(C) &kp LC(A) &kp LC(Y)>;
+    };
+
+    cyg_m_mac: cyg_m_mac {
+        compatible = "cygnus,input-processor-gesture";
+        #input-processor-cells = <0>;
+        tick = <18>;
+        wait-ms = <500>;
+        tap-ms = <20>;
+        bindings = <&kp LC(TAB) &kp LC(LS(TAB)) &kp LG(T) &kp LG(W)>;
+    };
+
+    cyg_m_win: cyg_m_win {
+        compatible = "cygnus,input-processor-gesture";
+        #input-processor-cells = <0>;
+        tick = <18>;
+        wait-ms = <500>;
+        tap-ms = <20>;
+        bindings = <&kp LC(TAB) &kp LC(LS(TAB)) &kp LC(T) &kp LC(W)>;
+    };
+
+    cyg_r_mac: cyg_r_mac {
+        compatible = "cygnus,input-processor-gesture";
+        #input-processor-cells = <0>;
+        tick = <18>;
+        wait-ms = <500>;
+        tap-ms = <20>;
+        bindings = <&kp LC(RIGHT_ARROW) &kp LC(LEFT_ARROW) &kp LC(UP_ARROW) &kp LC(DOWN_ARROW)>;
+    };
+
+    cyg_r_win: cyg_r_win {
+        compatible = "cygnus,input-processor-gesture";
+        #input-processor-cells = <0>;
+        tick = <18>;
+        wait-ms = <500>;
+        tap-ms = <20>;
+        bindings = <&kp LC(LG(RIGHT_ARROW)) &kp LC(LG(LEFT_ARROW)) &kp LG(TAB) &kp LG(D)>;
     };
 
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
-        input-processors = <&cyg_trackball_input>;
+
+        d_mac_gesture {
+            layers = <9>;
+            input-processors = <&cyg_d_mac>;
+        };
+
+        m_mac_gesture {
+            layers = <10>;
+            input-processors = <&cyg_m_mac>;
+        };
+
+        n_pan_gesture {
+            layers = <11>;
+            input-processors = <&zip_xy_to_scroll_mapper>;
+        };
+
+        d_win_gesture {
+            layers = <12>;
+            input-processors = <&cyg_d_win>;
+        };
+
+        m_win_gesture {
+            layers = <13>;
+            input-processors = <&cyg_m_win>;
+        };
+
+        r_mac_gesture {
+            layers = <16>;
+            input-processors = <&cyg_r_mac>;
+        };
+
+        r_win_gesture {
+            layers = <17>;
+            input-processors = <&cyg_r_win>;
+        };
     };
 };
 

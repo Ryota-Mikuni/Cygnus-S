@@ -7,17 +7,54 @@ properties:
     type: int
     required: true
     const: 0
-  track-remainders:
-    type: boolean
-  tick:
+  threshold:
     type: int
     default: 18
-  wait-ms:
+  ratio-numerator:
     type: int
-    default: 20
+    default: 13
+  ratio-denominator:
+    type: int
+    default: 10
   tap-ms:
     type: int
     default: 20
-  bindings:
+  win-layer:
+    type: int
+    required: true
+  automouse-layer:
+    type: int
+    required: true
+  win-automouse-layer:
+    type: int
+    required: true
+  n-position:
+    type: int
+    required: true
+  r-position:
+    type: int
+    required: true
+  d-position:
+    type: int
+    required: true
+  m-position:
+    type: int
+    required: true
+  d-mac-bindings:
+    type: phandle-array
+    required: true
+  d-win-bindings:
+    type: phandle-array
+    required: true
+  m-mac-bindings:
+    type: phandle-array
+    required: true
+  m-win-bindings:
+    type: phandle-array
+    required: true
+  r-mac-bindings:
+    type: phandle-array
+    required: true
+  r-win-bindings:
     type: phandle-array
     required: true

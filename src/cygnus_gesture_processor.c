@@ -13,6 +13,7 @@
 #include <drivers/input_processor.h>
 
 #include <zmk/behavior.h>
+#include <zmk/behavior_queue.h>
 #include <zmk/events/position_state_changed.h>
 #include <zmk/keymap.h>
 
@@ -59,12 +60,6 @@ struct cygnus_gesture_processor_data {
     uint32_t position;
     int32_t dx;
     int32_t dy;
-    const struct device *dev;
-    bool pending;
-    struct zmk_behavior_binding pending_binding;
-    uint32_t pending_position;
-    struct k_work press_work;
-    struct k_work_delayable release_work;
 };
 
 static uint8_t kind_for_position(const struct cygnus_gesture_processor_config *cfg,
@@ -118,8 +113,8 @@ static uint8_t direction_for(int32_t dx, int32_t dy, int32_t threshold, int32_t 
     return CYG_DIR_NONE;
 }
 
-static int invoke_binding(const struct zmk_behavior_binding *binding, uint32_t position,
-                          bool pressed) {
+static int queue_binding(const struct zmk_behavior_binding *binding, uint32_t position,
+                         uint32_t tap_ms) {
     if (binding == NULL || binding->behavior_dev == NULL) {
         return -EINVAL;
     }
@@ -132,50 +127,11 @@ static int invoke_binding(const struct zmk_behavior_binding *binding, uint32_t p
 #endif
     };
 
-    return zmk_behavior_invoke_binding(binding, event, pressed);
-}
-
-static void release_work_handler(struct k_work *work) {
-    struct k_work_delayable *dwork = k_work_delayable_from_work(work);
-    struct cygnus_gesture_processor_data *data =
-        CONTAINER_OF(dwork, struct cygnus_gesture_processor_data, release_work);
-
-    if (!data->pending) {
-        return;
-    }
-
-    invoke_binding(&data->pending_binding, data->pending_position, false);
-    data->pending = false;
-}
-
-static void press_work_handler(struct k_work *work) {
-    struct cygnus_gesture_processor_data *data =
-        CONTAINER_OF(work, struct cygnus_gesture_processor_data, press_work);
-
-    if (!data->pending || data->dev == NULL) {
-        return;
-    }
-
-    const struct cygnus_gesture_processor_config *cfg = data->dev->config;
-    int ret = invoke_binding(&data->pending_binding, data->pending_position, true);
+    int ret = zmk_behavior_queue_add(&event, *binding, true, tap_ms);
     if (ret < 0) {
-        data->pending = false;
-        return;
+        return ret;
     }
-
-    k_work_schedule(&data->release_work, K_MSEC(MAX(cfg->tap_ms, 0)));
-}
-
-static int queue_binding(struct cygnus_gesture_processor_data *data,
-                         const struct zmk_behavior_binding *binding, uint32_t position) {
-    if (data->pending || binding == NULL || binding->behavior_dev == NULL) {
-        return -EBUSY;
-    }
-
-    data->pending_binding = *binding;
-    data->pending_position = position;
-    data->pending = true;
-    return k_work_submit(&data->press_work);
+    return zmk_behavior_queue_add(&event, *binding, false, 0);
 }
 
 static void begin_gesture(struct cygnus_gesture_processor_data *data, uint8_t kind,
@@ -291,7 +247,7 @@ static int cygnus_gesture_processor_handle_event(const struct device *dev,
             bool windows = zmk_keymap_layer_active(cfg->win_layer);
             const struct zmk_behavior_binding *table = binding_table_for(cfg, data->kind, windows);
             if (table != NULL && direction < CYG_BINDING_COUNT) {
-                int ret = queue_binding(data, &table[direction], data->position);
+                int ret = queue_binding(&table[direction], data->position, MAX(cfg->tap_ms, 0));
                 if (ret >= 0) {
                     data->fired = true;
                 }
@@ -306,16 +262,6 @@ static int cygnus_gesture_processor_handle_event(const struct device *dev,
 static struct zmk_input_processor_driver_api cygnus_gesture_processor_api = {
     .handle_event = cygnus_gesture_processor_handle_event,
 };
-
-static int cygnus_gesture_processor_init(const struct device *dev) {
-    struct cygnus_gesture_processor_data *data = dev->data;
-
-    data->dev = dev;
-    k_work_init(&data->press_work, press_work_handler);
-    k_work_init_delayable(&data->release_work, release_work_handler);
-
-    return 0;
-}
 
 #define CYG_BINDING_FROM_PROP(idx, inst, prop)                                                     \
     {                                                                                              \
@@ -376,9 +322,9 @@ static int cygnus_gesture_processor_init(const struct device *dev) {
         .r_mac_bindings = cyg_r_mac_bindings_##n,                                                  \
         .r_win_bindings = cyg_r_win_bindings_##n,                                                  \
     };                                                                                             \
-    DEVICE_DT_INST_DEFINE(n, cygnus_gesture_processor_init, NULL, &cygnus_gesture_data_##n,        \
-                          &cygnus_gesture_config_##n, POST_KERNEL,                                 \
-                          CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &cygnus_gesture_processor_api);
+    DEVICE_DT_INST_DEFINE(n, NULL, NULL, &cygnus_gesture_data_##n, &cygnus_gesture_config_##n,     \
+                          POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT,                        \
+                          &cygnus_gesture_processor_api);
 
 ZMK_LISTENER(cygnus_gesture_processor, handle_position_event_dispatcher);
 ZMK_SUBSCRIPTION(cygnus_gesture_processor, zmk_position_state_changed);

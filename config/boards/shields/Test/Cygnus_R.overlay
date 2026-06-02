@@ -17,7 +17,7 @@
             ;
 };
 
-&mg {
+&{/behaviors/mouse_gesture} {
     hold-while-undecided;
 };
 

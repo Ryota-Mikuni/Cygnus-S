@@ -136,13 +136,11 @@ static const struct behavior_driver_api cygnus_gesture_driver_api = {
     .binding_released = on_keymap_binding_released,
 };
 
-#define CYG_BINDING(idx, inst) ZMK_KEYMAP_EXTRACT_BINDING(idx, DT_DRV_INST(inst))
-
 #define CYG_BINDINGS_TOTAL (CYG_BINDINGS_GROUP_COUNT * CYGNUS_GESTURE_BINDING_COUNT)
 
 #define CYG_INST(n)                                                                                \
     static const struct zmk_behavior_binding cyg_bindings_##n[] = {                                \
-        LISTIFY(DT_INST_PROP_LEN(n, bindings), CYG_BINDING, (, ), n)};                             \
+        LISTIFY(DT_INST_PROP_LEN(n, bindings), ZMK_KEYMAP_EXTRACT_BINDING, (, ), DT_DRV_INST(n))}; \
     BUILD_ASSERT(ARRAY_SIZE(cyg_bindings_##n) == CYG_BINDINGS_TOTAL,                               \
                  "cy_gesture bindings must contain 8 groups of 5 bindings");                      \
     static const struct cygnus_gesture_config cyg_config_##n = {                                   \

@@ -68,17 +68,11 @@
     };
 
     behaviors {
-        scroll_up_down: mouse_wheel_up_down {
-            compatible = "zmk,behavior-sensor-rotate";
-            #sensor-binding-cells = <0>;
-            bindings = <&msc SCRL_DOWN>, <&msc SCRL_UP>;
-            tap-ms = <20>;
-        };
-
-        scroll_right_left: mouse_wheel_right_left {
-            compatible = "zmk,behavior-sensor-rotate";
-            #sensor-binding-cells = <0>;
-            bindings = <&msc SCRL_LEFT>, <&msc SCRL_RIGHT>;
+        rot_scroll: encoder_scroll {
+            compatible = "zmk,behavior-sensor-rotate-var";
+            label = "ROT_SCROLL";
+            #sensor-binding-cells = <2>;
+            bindings = <&msc>, <&msc>;
             tap-ms = <20>;
         };
 
@@ -280,7 +274,7 @@
 
         default_layer { // Layer 0: Mac/Common Base
             display-name = "Mac";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &kp Q  &kp L  &kp U  &kp COMMA  &kp DOT  &kp F  &kp W  &kp R  &kp Y  &kp P
                     &kp E  &kp I  &kp A  &kp O  &kp MINUS  &kp C_MUTE  &kp LS(N8)  &kp K  &kp T  &kp N  &kp S  &kp H
@@ -291,7 +285,7 @@
 
         windows_overlay_layer { // Layer 1: Windows overlay
             display-name = "Win";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
@@ -302,7 +296,7 @@
 
         num_layer { // Layer 2: Num/Sym
             display-name = "Num";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &kp SEMI  &kp LBKT  &kp HASH  &kp DLLR  &kp PRCNT  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_PLUS  &kp KP_MINUS
                     &kp RBKT  &kp LS(N7)  &kp EXCL  &kp LS(MINUS)  &kp LS(SEMI)  &kp C_MUTE  &kp SQT  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_DIVIDE
@@ -313,7 +307,7 @@
 
         nav_mac_layer { // Layer 3: Nav/Edit Mac
             display-name = "NavMac";
-            sensor-bindings = <&scroll_right_left>;
+            sensor-bindings = <&rot_scroll SCRL_LEFT SCRL_RIGHT &rot_scroll SCRL_LEFT SCRL_RIGHT>;
             bindings = <
                     &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END  &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END
                     &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none  &kp C_MUTE  &none  &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none
@@ -324,7 +318,7 @@
 
         automouse_layer { // Layer 4: AutoMouse
             display-name = "AutoMouse";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &am_key_mac Q  &am_key_mac L  &am_key_mac U  &am_key_mac COMMA  &am_key_mac DOT  &am_key_mac F  &am_key_mac W  &am_key_mac R  &am_key_mac Y  &am_key_mac P
                     &am_key_mac E  &am_key_mac I  &am_key_mac A  &mo SNIPE  &am_key_mac MINUS  &kp C_MUTE  &am_key_mac LS(N8)  &am_key_mac K  &mkp MB1  &mg N_PAN MB3  &mg R_MAC MB2  &am_key_mac H
@@ -335,7 +329,7 @@
 
         nav_win_layer { // Layer 5: Nav/Edit Windows
             display-name = "NavWin";
-            sensor-bindings = <&scroll_right_left>;
+            sensor-bindings = <&rot_scroll SCRL_LEFT SCRL_RIGHT &rot_scroll SCRL_LEFT SCRL_RIGHT>;
             bindings = <
                     &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END  &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END
                     &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none  &kp C_MUTE  &none  &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none
@@ -346,7 +340,7 @@
 
         function_layer { // Layer 6: Fn
             display-name = "Fn";
-            sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN>;
+            sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN &inc_dec_kp C_BRI_UP C_BRI_DN>;
             bindings = <
                     &kp F1  &kp F2  &kp F3  &kp F4  &kp F5  &kp F1  &kp F2  &kp F3  &kp F4  &kp F5
                     &kp F6  &kp F7  &kp F8  &kp F9  &kp F10  &kp C_MUTE  &none  &kp F6  &kp F7  &kp F8  &kp F9  &kp F10
@@ -357,7 +351,7 @@
 
         system_layer { // Layer 7: System/BT
             display-name = "System";
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
             bindings = <
                     &bt0_mac  &bt1_mac  &bt2_win  &bt3_win  &bt4_win  &none  &none  &none  &none  &none
                     &bt BT_PRV  &bt BT_NXT  &bt BT_CLR  &none  &none  &kp C_MUTE  &none  &none  &none  &none  &none  &none
@@ -368,7 +362,7 @@
 
         win_automouse_override_layer { // Layer 8: Windows AutoMouse override
             display-name = "WinAM";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &am_key_win Q  &am_key_win L  &am_key_win U  &am_key_win COMMA  &am_key_win DOT  &am_key_win F  &am_key_win W  &am_key_win R  &am_key_win Y  &am_key_win P
                     &am_key_win E  &am_key_win I  &am_key_win A  &trans  &am_key_win MINUS  &trans  &am_key_win LS(N8)  &am_key_win K  &trans  &trans  &mg R_WIN MB2  &am_key_win H
@@ -379,7 +373,7 @@
 
         d_mac_gesture_layer { // Layer 9: internal D gesture, Mac
             display-name = "D-Mac";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
@@ -390,7 +384,7 @@
 
         m_mac_gesture_layer { // Layer 10: internal M gesture, Mac
             display-name = "M-Mac";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
@@ -401,7 +395,7 @@
 
         n_pan_layer { // Layer 11: internal N pan
             display-name = "N-Pan";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
@@ -412,7 +406,7 @@
 
         d_win_gesture_layer { // Layer 12: internal D gesture, Windows
             display-name = "D-Win";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
@@ -423,7 +417,7 @@
 
         m_win_gesture_layer { // Layer 13: internal M gesture, Windows
             display-name = "M-Win";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
@@ -434,7 +428,7 @@
 
         win_num_override_layer { // Layer 14: Windows Num host override
             display-name = "WinNum";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
@@ -445,7 +439,7 @@
 
         win_fn_override_layer { // Layer 15: Windows Fn host override
             display-name = "WinFn";
-            sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN>;
+            sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN &inc_dec_kp C_BRI_UP C_BRI_DN>;
             bindings = <
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
@@ -456,7 +450,7 @@
 
         r_mac_gesture_layer { // Layer 16: internal right-click gesture, Mac
             display-name = "R-Mac";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
@@ -467,7 +461,7 @@
 
         r_win_gesture_layer { // Layer 17: internal right-click gesture, Windows
             display-name = "R-Win";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
@@ -478,7 +472,7 @@
 
         snipe_layer { // Layer 18: internal pointer slow mode
             display-name = "Slow";
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
             bindings = <
                     &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
                     &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans

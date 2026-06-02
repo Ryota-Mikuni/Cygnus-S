@@ -2,7 +2,7 @@
 // v8: encoder scroll + host-aware AutoMouse gesture layers.
 // - BT0/BT1: Mac host profile.
 // - BT2/BT3/BT4: Windows host profile via overlay layer.
-// - Encoder is the primary scroll input.
+// - Encoder is the primary scroll input; Mac host layers invert vertical scroll in firmware.
 // - Trackball keeps AutoMouse on Layer 4.
 // - AutoMouse is mouse/gesture mode; unassigned keys fall through as base text and return to text.
 // - N/right-click/D/M positions use hold-tap for gesture families.
@@ -73,7 +73,8 @@
             label = "ROT_SCROLL";
             #sensor-binding-cells = <2>;
             bindings = <&msc>, <&msc>;
-            tap-ms = <20>;
+            // Hold scroll long enough for the mouse-scroll behavior to emit reliably.
+            tap-ms = <60>;
         };
 
         mg: mouse_gesture {
@@ -275,7 +276,7 @@
 
         default_layer { // Layer 0: Mac/Common Base
             display-name = "Mac";
-            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
             bindings = <
                     &kp Q  &kp L  &kp U  &kp COMMA  &kp DOT  &kp F  &kp W  &kp R  &kp Y  &kp P
                     &kp E  &kp I  &kp A  &kp O  &kp MINUS  &kp C_MUTE  &kp LS(N8)  &kp K  &kp T  &kp N  &kp S  &kp H
@@ -297,7 +298,7 @@
 
         num_layer { // Layer 2: Num/Sym
             display-name = "Num";
-            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
             bindings = <
                     &kp SEMI  &kp LBKT  &kp HASH  &kp DLLR  &kp PRCNT  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_PLUS  &kp KP_MINUS
                     &kp RBKT  &kp LS(N7)  &kp EXCL  &kp LS(MINUS)  &kp LS(SEMI)  &kp C_MUTE  &kp SQT  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_DIVIDE
@@ -319,7 +320,7 @@
 
         automouse_layer { // Layer 4: AutoMouse
             display-name = "AutoMouse";
-            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
             bindings = <
                     &am_key_mac Q  &am_key_mac L  &am_key_mac U  &am_key_mac COMMA  &am_key_mac DOT  &am_key_mac F  &am_key_mac W  &am_key_mac R  &am_key_mac Y  &am_key_mac P
                     &am_key_mac E  &am_key_mac I  &am_key_mac A  &mo SNIPE  &am_key_mac MINUS  &kp C_MUTE  &am_key_mac LS(N8)  &am_key_mac K  &mkp MB1  &mg N_PAN MB3  &mg R_MAC MB2  &am_key_mac H
@@ -374,7 +375,7 @@
 
         d_mac_gesture_layer { // Layer 9: internal D gesture, Mac
             display-name = "D-Mac";
-            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
@@ -385,7 +386,7 @@
 
         m_mac_gesture_layer { // Layer 10: internal M gesture, Mac
             display-name = "M-Mac";
-            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none
@@ -451,7 +452,7 @@
 
         r_mac_gesture_layer { // Layer 16: internal right-click gesture, Mac
             display-name = "R-Mac";
-            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
             bindings = <
                     &none &none &none &none &none &none &none &none &none &none
                     &none &none &none &none &none &none &none &none &none &none &none &none

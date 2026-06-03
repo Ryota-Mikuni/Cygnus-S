@@ -92,6 +92,7 @@
         n_pan_mac_gesture {
             layers = <11>;
             input-processors =
+                <&zip_xy_scaler 2 3>,
                 <&zip_xy_to_scroll_mapper>,
                 <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>;
         };
@@ -118,7 +119,9 @@
 
         n_pan_win_gesture {
             layers = <19>;
-            input-processors = <&zip_xy_to_scroll_mapper>;
+            input-processors =
+                <&zip_xy_scaler 2 3>,
+                <&zip_xy_to_scroll_mapper>;
         };
     };
 };

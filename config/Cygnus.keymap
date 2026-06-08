@@ -295,7 +295,7 @@
                     &kp Q  &kp L  &kp U  &kp COMMA  &kp DOT  &kp F  &kp W  &kp R  &kp Y  &kp P
                     &kp E  &kp I  &kp A  &kp O  &kp MINUS  &kp C_MUTE  &kp LS(N8)  &kp K  &kp T  &kg N_PAN N  &kg R_MAC S  &kp H
                     &kp J  &kp X  &kp C  &kp V  &kp QMARK  &kp TAB  &kp LS(N9)  &kp G  &kg D_MAC D  &kg M_MAC M  &kp Z  &kp B
-                    &kp LCTRL  &kp LALT  &kp LGUI  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &lt TB_SCROLL LANG1  &ss_mac
+                    &kp LCTRL  &kp LALT  &kp LGUI  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &kp LANG1  &lt TB_SCROLL ESCAPE
             >;
         };
 
@@ -306,7 +306,7 @@
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &kg N_PAN_WIN N  &kg R_WIN S  &trans
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &kg D_WIN D  &kg M_WIN M  &trans  &trans
-                    &kp LGUI  &kp LALT  &kp LCTRL  &trans  &trans  &trans  &lt NAV_WIN BSPC  &trans  &ss_win
+                    &kp LGUI  &kp LALT  &kp LCTRL  &trans  &trans  &trans  &lt NAV_WIN BSPC  &trans  &trans
             >;
         };
 
@@ -339,7 +339,7 @@
                     &am_key_mac Q  &am_key_mac L  &am_key_mac U  &am_key_mac COMMA  &am_key_mac DOT  &am_key_mac F  &am_key_mac W  &am_key_mac R  &am_key_mac Y  &am_key_mac P
                     &am_key_mac E  &am_key_mac I  &am_key_mac A  &mo SNIPE  &am_key_mac MINUS  &kp C_MUTE  &am_key_mac LS(N8)  &am_key_mac K  &mkp MB1  &mg N_PAN MB3  &mg R_MAC MB2  &am_key_mac H
                     &am_key_mac J  &am_key_mac X  &am_key_mac C  &am_key_mac V  &am_key_mac QMARK  &am_key_mac TAB  &am_key_mac LS(N9)  &am_key_mac G  &mg D_MAC MB4  &mg M_MAC MB5  &am_key_mac Z  &am_key_mac B
-                    &am_key_mac LCTRL  &am_key_mac LALT  &am_key_mac LGUI  &am_lt_mac FN LANG2  &am_mt_mac LSHIFT SPACE  &am_lt_mac NUM ENTER  &am_lt_mac NAV_MAC BSPC  &am_lt_mac TB_SCROLL LANG1  &kp ESCAPE
+                    &am_key_mac LCTRL  &am_key_mac LALT  &am_key_mac LGUI  &am_lt_mac FN LANG2  &am_mt_mac LSHIFT SPACE  &am_lt_mac NUM ENTER  &am_lt_mac NAV_MAC BSPC  &am_key_mac LANG1  &am_lt_mac TB_SCROLL ESCAPE
             >;
         };
 
@@ -383,7 +383,7 @@
                     &am_key_win Q  &am_key_win L  &am_key_win U  &am_key_win COMMA  &am_key_win DOT  &am_key_win F  &am_key_win W  &am_key_win R  &am_key_win Y  &am_key_win P
                     &am_key_win E  &am_key_win I  &am_key_win A  &trans  &am_key_win MINUS  &trans  &am_key_win LS(N8)  &am_key_win K  &trans  &mg N_PAN_WIN MB3  &mg R_WIN MB2  &am_key_win H
                     &am_key_win J  &am_key_win X  &am_key_win C  &am_key_win V  &am_key_win QMARK  &am_key_win TAB  &am_key_win LS(N9)  &am_key_win G  &mg D_WIN MB4  &mg M_WIN MB5  &am_key_win Z  &am_key_win B
-                    &am_key_win LGUI  &am_key_win LALT  &am_key_win LCTRL  &am_lt_win FN LANG2  &am_mt_win LSHIFT SPACE  &am_lt_win NUM ENTER  &am_lt_win NAV_WIN BSPC  &am_lt_win TB_SCROLL LANG1  &kp ESCAPE
+                    &am_key_win LGUI  &am_key_win LALT  &am_key_win LCTRL  &am_lt_win FN LANG2  &am_mt_win LSHIFT SPACE  &am_lt_win NUM ENTER  &am_lt_win NAV_WIN BSPC  &am_key_win LANG1  &am_lt_win TB_SCROLL ESCAPE
             >;
         };
 
@@ -508,7 +508,7 @@
             >;
         };
 
-        trackball_scroll_layer { // Layer 20: hold Kana for PMW3610 trackball scroll
+        trackball_scroll_layer { // Layer 20: hold Esc for PMW3610 trackball scroll
             display-name = "TB-Scroll";
             sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
             bindings = <

@@ -101,6 +101,14 @@
             hold-while-undecided;
             bindings = <&mo>, <&kp>;
         };
+
+        qex: question_exclaim {
+            compatible = "zmk,behavior-mod-morph";
+            label = "QUESTION_EXCLAIM";
+            #binding-cells = <0>;
+            bindings = <&kp QMARK>, <&kp EXCL>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
     };
 
     macros {
@@ -294,7 +302,7 @@
             bindings = <
                     &kp Q  &kp L  &kp U  &kp COMMA  &kp DOT  &kp F  &kp W  &kp R  &kp Y  &kp P
                     &kp E  &kp I  &kp A  &kp O  &kp MINUS  &kp C_MUTE  &kp LS(N8)  &kp K  &kp T  &kg N_PAN N  &kg R_MAC S  &kp H
-                    &kp J  &kp X  &kp C  &kp V  &kp QMARK  &kp TAB  &kp LS(N9)  &kp G  &kg D_MAC D  &kg M_MAC M  &kp Z  &kp B
+                    &kp J  &kp X  &kp C  &kp V  &qex  &kp TAB  &kp LS(N9)  &kp G  &kg D_MAC D  &kg M_MAC M  &kp Z  &kp B
                     &kp LCTRL  &kp LALT  &kp LGUI  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &kp LANG1  &lt TB_SCROLL ESCAPE
             >;
         };

@@ -519,8 +519,8 @@ const layers = {
     sensor:"Encoder vertical scroll",
     note:"Baseは文字入力を優先。右端Escを長押ししながらトラックボールを動かすとスクロール。",
     overview:"文字入力中心。D/M/GはBaseでは通常文字、GestureはAutoMouseで使う。",
-    mac:["Q","L","U",",",".","F","W","R","Y","P","E","I","A","O","-","Mute","(","K","T","N","S","H","J","X","C","V","?","Tab",")","G","D","M","Z","B","Ctrl|Sub","Alt|Option","Cmd|Primary","英数|hold Fn","Space|hold Shift","Enter|hold Num","Bspc|hold Nav","かな","Esc|hold TB scroll"],
-    win:["Q","L","U",",",".","F","W","R","Y","P","E","I","A","O","-","Mute","(","K","T","N","S","H","J","X","C","V","?","Tab",")","G","D","M","Z","B","Win|OS/Sub","Alt","Ctrl|Primary","英数|hold Fn","Space|hold Shift","Enter|hold Num","Bspc|hold NavWin","かな","Esc|hold TB scroll"]
+    mac:["Q","L","U",",",".","F","W","R","Y","P","E","I","A","O","-","Mute","(","K","T","N","S","H","J","X","C","V","?|S -> !","Tab",")","G","D","M","Z","B","Ctrl|Sub","Alt|Option","Cmd|Primary","英数|hold Fn","Space|hold Shift","Enter|hold Num","Bspc|hold Nav","かな","Esc|hold TB scroll"],
+    win:["Q","L","U",",",".","F","W","R","Y","P","E","I","A","O","-","Mute","(","K","T","N","S","H","J","X","C","V","?|S -> !","Tab",")","G","D","M","Z","B","Win|OS/Sub","Alt","Ctrl|Primary","英数|hold Fn","Space|hold Shift","Enter|hold Num","Bspc|hold NavWin","かな","Esc|hold TB scroll"]
   },
   num:{
     name:"Num/Sym",
@@ -605,6 +605,7 @@ function bindingInfo(value, index){
   if(state.layer === "automouse" && index === 29) return "Tap: MB3. Hold: G_PAN layer. Ball movement becomes pan/scroll.";
   if(state.layer === "automouse" && index === 30) return state.host === "mac" ? "Tap: MB4 Back. Hold: D_MAC layer. Ball right Paste, left Copy, up Undo, down Redo." : "Tap: MB4 Back. Hold: D_WIN layer. Ball right Paste, left Copy, up Undo, down Redo.";
   if(state.layer === "automouse" && index === 31) return state.host === "mac" ? "Tap: MB5 Forward. Hold: M_MAC layer. Ball right Next Tab, left Prev Tab, up Overview, down Desktop." : "Tap: MB5 Forward. Hold: M_WIN layer. Ball right Next Tab, left Prev Tab, up Task View, down Desktop.";
+  if(state.layer === "base" && index === 26) return "Normally sends ?. If either Shift is held, sends ! via mod-morph.";
   if(index === 37 && /英数/.test(text)) return "Tap sends Eisu / LANG2. On Base/Num/Nav it can also hold Fn where defined. In AutoMouse it returns to text input.";
   if(index === 41 && /かな/.test(text)) return state.layer === "automouse" ? "Tap sends Kana / LANG1, then returns to text input." : "Tap sends Kana / LANG1.";
   if(index === 42 && /Esc/.test(text)) return "Tap sends Escape. Hold while moving the trackball to use PMW3610 trackball scroll.";

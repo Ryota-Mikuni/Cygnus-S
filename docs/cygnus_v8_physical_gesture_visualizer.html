@@ -421,7 +421,7 @@ button.layer.active{background:var(--accent-2);border-color:var(--accent-2)}
       <p class="lede">物理43ポジション、Mac/Windows host差分、AutoMouse上のD/M/Gジェスチャーを同じ画面で確認できるキーマップビュー。</p>
     </div>
     <div class="status" aria-label="build status">
-      <div class="stat"><b>Commit</b><span>4dc0740d</span></div>
+      <div class="stat"><b>Commit</b><span>main latest</span></div>
       <div class="stat"><b>Gesture debounce</b><span>wait 500ms</span></div>
       <div class="stat"><b>AutoMouse</b><span>Layer 4</span></div>
       <div class="stat"><b>BT host</b><span>0-1 Mac / 2-4 Win</span></div>
@@ -469,7 +469,7 @@ button.layer.active{background:var(--accent-2);border-color:var(--accent-2)}
       <section class="detail" id="detail"></section>
       <section class="side-list">
         <div class="side-item"><b>Host behavior</b><span id="hostSummary"></span></div>
-        <div class="side-item"><b>Pointer / scroll</b><span>Trackball movement enters AutoMouse. Encoder handles vertical scroll on Base/Num/AutoMouse and horizontal scroll on Nav.</span></div>
+        <div class="side-item"><b>Pointer / scroll</b><span>Trackball movement enters AutoMouse. Hold Esc while moving the trackball to scroll. Encoder handles vertical scroll on Base/Num/AutoMouse and horizontal scroll on Nav.</span></div>
         <div class="side-item"><b>Gesture model</b><span>AutoMouse内でD/M/Gをholdすると内部gesture layerが有効化され、ボール移動の方向でショートカットを発火する。</span></div>
       </section>
     </aside>
@@ -517,10 +517,10 @@ const layers = {
   base:{
     name:"Base",
     sensor:"Encoder vertical scroll",
-    note:"Baseは文字入力を優先。右端はHost別スクリーンショット。EscapeはBaseから退避。",
+    note:"Baseは文字入力を優先。右端Escを長押ししながらトラックボールを動かすとスクロール。",
     overview:"文字入力中心。D/M/GはBaseでは通常文字、GestureはAutoMouseで使う。",
-    mac:["Q","L","U",",",".","F","W","R","Y","P","E","I","A","O","-","Mute","(","K","T","N","S","H","J","X","C","V","?","Tab",")","G","D","M","Z","B","Ctrl|Sub","Alt|Option","Cmd|Primary","英数|hold Fn","Space|hold Shift","Enter|hold Num","Bspc|hold Nav","かな","Screenshot|Shift Cmd 5"],
-    win:["Q","L","U",",",".","F","W","R","Y","P","E","I","A","O","-","Mute","(","K","T","N","S","H","J","X","C","V","?","Tab",")","G","D","M","Z","B","Win|OS/Sub","Alt","Ctrl|Primary","英数|hold Fn","Space|hold Shift","Enter|hold Num","Bspc|hold NavWin","かな","Snipping|Win Shift S"]
+    mac:["Q","L","U",",",".","F","W","R","Y","P","E","I","A","O","-","Mute","(","K","T","N","S","H","J","X","C","V","?","Tab",")","G","D","M","Z","B","Ctrl|Sub","Alt|Option","Cmd|Primary","英数|hold Fn","Space|hold Shift","Enter|hold Num","Bspc|hold Nav","かな","Esc|hold TB scroll"],
+    win:["Q","L","U",",",".","F","W","R","Y","P","E","I","A","O","-","Mute","(","K","T","N","S","H","J","X","C","V","?","Tab",")","G","D","M","Z","B","Win|OS/Sub","Alt","Ctrl|Primary","英数|hold Fn","Space|hold Shift","Enter|hold Num","Bspc|hold NavWin","かな","Esc|hold TB scroll"]
   },
   num:{
     name:"Num/Sym",
@@ -543,8 +543,8 @@ const layers = {
     sensor:"Encoder vertical scroll",
     note:"文字入力を止めたmouse/gesture mode。D/M/Gをholdしながらtrackballを動かす。",
     overview:"クリック、明示的な文章復帰、D/M/G gesture。",
-    mac:["none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","Mute","none","none","Left Click|MB1","Middle|MB3","Right Click|MB2","none","none","none","none","none","none","none","none","G Gesture|tap MB3 / hold Pan","D Gesture|tap Back / hold Clipboard","M Gesture|tap Forward / hold Nav","none","none","none","none","none","英数|return text","none","none","none","かな|return text","Esc"],
-    win:["none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","Mute","none","none","Left Click|MB1","Middle|MB3","Right Click|MB2","none","none","none","none","none","none","none","none","G Gesture|tap MB3 / hold Pan","D Gesture|tap Back / hold Clipboard","M Gesture|tap Forward / hold Nav","none","none","none","none","none","英数|return Win text","none","none","none","かな|return Win text","Esc"]
+    mac:["none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","Mute","none","none","Left Click|MB1","Middle|MB3","Right Click|MB2","none","none","none","none","none","none","none","none","G Gesture|tap MB3 / hold Pan","D Gesture|tap Back / hold Clipboard","M Gesture|tap Forward / hold Nav","none","none","none","none","none","英数|return text","none","none","none","かな|return text","Esc|hold TB scroll"],
+    win:["none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","Mute","none","none","Left Click|MB1","Middle|MB3","Right Click|MB2","none","none","none","none","none","none","none","none","G Gesture|tap MB3 / hold Pan","D Gesture|tap Back / hold Clipboard","M Gesture|tap Forward / hold Nav","none","none","none","none","none","英数|return Win text","none","none","none","かな|return Win text","Esc|hold TB scroll"]
   },
   fn:{
     name:"Fn",
@@ -606,8 +606,8 @@ function bindingInfo(value, index){
   if(state.layer === "automouse" && index === 30) return state.host === "mac" ? "Tap: MB4 Back. Hold: D_MAC layer. Ball right Paste, left Copy, up Undo, down Redo." : "Tap: MB4 Back. Hold: D_WIN layer. Ball right Paste, left Copy, up Undo, down Redo.";
   if(state.layer === "automouse" && index === 31) return state.host === "mac" ? "Tap: MB5 Forward. Hold: M_MAC layer. Ball right Next Tab, left Prev Tab, up Overview, down Desktop." : "Tap: MB5 Forward. Hold: M_WIN layer. Ball right Next Tab, left Prev Tab, up Task View, down Desktop.";
   if(index === 37 && /英数/.test(text)) return "Tap sends Eisu / LANG2. On Base/Num/Nav it can also hold Fn where defined. In AutoMouse it returns to text input.";
-  if(index === 41 && /かな/.test(text)) return "Tap sends Kana / LANG1. In AutoMouse it explicitly returns to text input.";
-  if(index === 42 && /Screenshot|Snipping/.test(text)) return state.host === "mac" ? "Mac screenshot UI: Shift + Command + 5." : "Windows snipping UI: Win + Shift + S.";
+  if(index === 41 && /かな/.test(text)) return state.layer === "automouse" ? "Tap sends Kana / LANG1, then returns to text input." : "Tap sends Kana / LANG1.";
+  if(index === 42 && /Esc/.test(text)) return "Tap sends Escape. Hold while moving the trackball to use PMW3610 trackball scroll.";
   if(/hold/.test(text)) return "Layer-tap or mod-tap behavior. Tap sends the first label; hold activates the secondary label.";
   return text === "none" ? "No binding on this layer." : "Direct binding on this layer.";
 }
@@ -682,8 +682,8 @@ function renderDetail(){
     <div class="detail-row"><b>Behavior</b><span>${escapeHtml(bindingInfo(value, state.selected))}</span></div>
   `;
   document.getElementById("hostSummary").textContent = state.host === "mac"
-    ? "BT0/BT1: Primary shortcut is Command. Base rightmost is Shift+Command+5."
-    : "BT2-BT4: Primary shortcut is Control. Base rightmost is Win+Shift+S.";
+    ? "BT0/BT1: Primary shortcut is Command. Base rightmost is tap Esc / hold trackball scroll."
+    : "BT2-BT4: Primary shortcut is Control. Base rightmost is tap Esc / hold trackball scroll.";
 }
 
 function renderGestures(){

@@ -322,10 +322,10 @@
             display-name = "Num";
             sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
             bindings = <
-                    &kp SEMI  &kp LBKT  &kp HASH  &kp DLLR  &kp PRCNT  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_PLUS  &kp KP_MINUS
-                    &kp RBKT  &kp LS(N7)  &kp EXCL  &kp LS(MINUS)  &kp LS(SEMI)  &kp C_MUTE  &kp SQT  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_DIVIDE
-                    &kp BSLH  &kp LS(INT1)  &kp LS(N6)  &kp INT3  &kp LS(INT3)  &none  &kp KP_NUMBER_0  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp SLASH  &kp KP_DOT
-                    &kp LCTRL  &kp LALT  &kp LGUI  &lt FN LANG2  &mt LSHIFT SPACE  &none  &lt NAV_MAC BSPC  &kp LANG1  &kp ESCAPE
+                    &none  &kp LS(COMMA)  &kp LS(DOT)  &kp COMMA  &kp DOT  &kp SLASH  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_PLUS
+                    &none  &kp LS(N6)  &kp LBKT  &kp LS(N8)  &kp LS(N9)  &kp C_MUTE  &none  &kp SQT  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MINUS
+                    &none  &kp LS(N5)  &kp LS(MINUS)  &kp RBKT  &kp NON_US_HASH  &mt RSHIFT TAB  &kp KP_DOT  &kp KP_NUMBER_0  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_MULTIPLY
+                    &kp LCTRL  &kp LALT  &kp LGUI  &lt FN LANG2  &mt LSHIFT SPACE  &none  &lt NAV_MAC BSPC  &kp LANG1  &kp KP_DIVIDE
             >;
         };
 

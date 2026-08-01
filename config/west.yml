@@ -17,7 +17,9 @@ manifest:
       import: app/west.yml
     - name: zmk-pmw3610-driver
       remote: Dist16384
-      revision: main
+      # Pin the exact driver revision used by the last known-good firmware build.
+      # Tracking main here can otherwise change trackball runtime behavior during a keymap-only update.
+      revision: 30da78323312d31429f21576e890412ecbac3bdf
       path: modules/zmk-pmw3610-driver
     - name: zmk-rgbled-widget
       remote: caksoylar

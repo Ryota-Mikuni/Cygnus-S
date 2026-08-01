@@ -525,10 +525,10 @@ const layers = {
   num:{
     name:"Num/Sym",
     sensor:"Encoder vertical scroll",
-    note:"数字・記号・テンキー。現行keymapではHost差分は薄く、主要差分はBase/Nav/AutoMouse側。",
-    overview:"数字、記号、テンキーを集約。Enter側のNum holdから入る。",
-    mac:["]","#","7","8","9","KP7","KP8","KP9","KP+","KP-",";","'","4","5","6","Mute","SQT","KP4","KP5","KP6","KP*","KP/","[","0","1","2","3","-","0","KP1","KP2","KP3","/","KP.","Ctrl","Alt","Cmd","英数|hold Fn","Space|hold Shift","none","Bspc|hold Nav","かな","Esc"],
-    win:null
+    note:"VialのJISキー位置を加味したテンキー配置。演算記号は右端に + / − / × / ÷ の順で縦に集約。",
+    overview:"0を1の左に置いたテンキーとJIS記号を集約。Enter側のNum holdから入る。",
+    mac:["none","<",">",",",".","・","7|Keypad","8|Keypad","9|Keypad","+|Keypad","none","&","@","(",")","Mute","none",":","4|Keypad","5|Keypad","6|Keypad","−|Keypad","none","%","=","[","]","Tab|hold RShift",".|Keypad","0|Keypad","1|Keypad","2|Keypad","3|Keypad","×|Keypad","Ctrl","Alt","Cmd","英数|hold Fn","Space|hold Shift","none","Bspc|hold Nav","かな","÷|Keypad"],
+    win:["none","<",">",",",".","・","7|Keypad","8|Keypad","9|Keypad","+|Keypad","none","&","@","(",")","Mute","none",":","4|Keypad","5|Keypad","6|Keypad","−|Keypad","none","%","=","[","]","Tab|hold RShift",".|Keypad","0|Keypad","1|Keypad","2|Keypad","3|Keypad","×|Keypad","Win","Alt","Ctrl","英数|hold Fn","Space|hold Shift","none","Bspc|hold NavWin","かな","÷|Keypad"]
   },
   nav:{
     name:"Nav/Edit",
@@ -563,7 +563,6 @@ const layers = {
     win:null
   }
 };
-layers.num.win = layers.num.mac;
 layers.fn.win = layers.fn.mac;
 layers.system.win = layers.system.mac;
 
@@ -596,7 +595,7 @@ function kindFor(value, index){
   if(/Ctrl|Alt|Cmd|Win|Shift|Primary|Option|Sub/.test(text)) return "mod";
   if(/Click|MB|Gesture|Pan|return text|return Win/.test(text)) return "mouse";
   if(/Home|Pg|Up|Down|Left|Right|Undo|Cut|Copy|Paste|Redo|Nav|Bspc|Esc/.test(text)) return "nav";
-  if(/KP|^[0-9]$|#|;|'|SQT|\[|\]|\+|\*|\//.test(text)) return "num";
+  if(/Keypad|^[0-9]$|[<>・&@():%=[\]+−×÷]/.test(text)) return "num";
   return "alpha";
 }
 

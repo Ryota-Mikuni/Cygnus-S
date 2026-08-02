@@ -1,12 +1,13 @@
 // Cygnus-S keymap
-// v8: encoder scroll + host-aware AutoMouse gesture layers.
+// v9: Vial-aligned daily layout + host-aware AutoMouse gesture layers.
 // - BT0/BT1: Mac host profile.
-// - BT2/BT3/BT4: Windows host profile via overlay layer.
-// - Encoder is the primary scroll input; Mac host layers invert vertical scroll in firmware.
+// - BT2: Windows host profile via overlay layer.
+// - Encoder is volume on Base/Num/AutoMouse, horizontal scroll on Nav, and brightness on Fn/BT.
 // - N-hold pan is host-aware so Mac can reverse vertical scroll without changing Windows.
 // - Trackball keeps AutoMouse on Layer 4.
 // - AutoMouse is mouse/gesture mode; unassigned keys fall through as base text and return to text.
 // - N/right-click/D/M positions use hold-tap for gesture families on Base and AutoMouse.
+// - Hold Esc for trackball scroll; vertical trackball scroll is inverted in Cygnus_R.conf.
 
 // Match the original Cygnus-S encoder scroll strength; ZMK's default is too small on macOS.
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 120
@@ -23,7 +24,7 @@
 #define AMOUSE 4
 #define NAV_WIN 5
 #define FN 6
-#define SYS 7
+#define RESERVED_SYS 7
 #define WIN_AMOUSE 8
 #define D_MAC 9
 #define M_MAC 10
@@ -36,7 +37,8 @@
 #define R_WIN 17
 #define SNIPE 18
 #define N_PAN_WIN 19
-#define TB_SCROLL 20
+#define VIAL_BT 20
+#define TB_SCROLL 21
 
 &lt {
     tapping-term-ms = <200>;
@@ -117,7 +119,7 @@
             #binding-cells = <0>;
             wait-ms = <0>;
             tap-ms = <20>;
-            bindings = <&kp LS(LG(N5))>;
+            bindings = <&kp LC(LS(LG(N4)))>;
         };
 
         ss_win: screenshot_win {
@@ -126,6 +128,22 @@
             wait-ms = <0>;
             tap-ms = <20>;
             bindings = <&kp LS(LG(S))>;
+        };
+
+        am_ss_mac: automouse_screenshot_mac {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <0>;
+            tap-ms = <20>;
+            bindings = <&to BASE &kp LC(LS(LG(N4)))>;
+        };
+
+        am_ss_win: automouse_screenshot_win {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <0>;
+            tap-ms = <20>;
+            bindings = <&to WIN &kp LS(LG(S))>;
         };
 
         text_return_mac: text_return_mac {
@@ -298,34 +316,34 @@
 
         default_layer { // Layer 0: Mac/Common Base
             display-name = "Mac";
-            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
             bindings = <
                     &kp Q  &kp L  &kp U  &kp COMMA  &kp DOT  &kp F  &kp W  &kp R  &kp Y  &kp P
-                    &kp E  &kp I  &kp A  &kp O  &kp MINUS  &kp C_MUTE  &kp LS(N8)  &kp K  &kp T  &kg N_PAN N  &kg R_MAC S  &kp H
-                    &kp J  &kp X  &kp C  &kp V  &qex  &kp TAB  &kp LS(N9)  &kp G  &kg D_MAC D  &kg M_MAC M  &kp Z  &kp B
-                    &kp LCTRL  &kp LALT  &kp LGUI  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &kp LANG1  &lt TB_SCROLL ESCAPE
+                    &kp E  &kp I  &kp A  &kp O  &kp MINUS  &kp C_MUTE  &none  &kp K  &kp T  &kg N_PAN N  &kg R_MAC S  &kp H
+                    &kp J  &kp X  &kp C  &kp V  &qex  &ss_mac  &mt RSHIFT TAB  &kp G  &kg D_MAC D  &kg M_MAC M  &kp Z  &kp B
+                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &lt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
             >;
         };
 
         windows_overlay_layer { // Layer 1: Windows overlay
             display-name = "Win";
-            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
             bindings = <
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &kg N_PAN_WIN N  &kg R_WIN S  &trans
-                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &kg D_WIN D  &kg M_WIN M  &trans  &trans
+                    &trans  &trans  &trans  &trans  &trans  &ss_win  &trans  &trans  &kg D_WIN D  &kg M_WIN M  &trans  &trans
                     &kp LGUI  &kp LALT  &kp LCTRL  &trans  &trans  &trans  &lt NAV_WIN BSPC  &trans  &trans
             >;
         };
 
         num_layer { // Layer 2: Num/Sym
             display-name = "Num";
-            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
             bindings = <
                     &none  &kp LS(COMMA)  &kp LS(DOT)  &kp COMMA  &kp DOT  &kp SLASH  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_PLUS
                     &none  &kp LS(N6)  &kp LBKT  &kp LS(N8)  &kp LS(N9)  &kp C_MUTE  &none  &kp SQT  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MINUS
                     &none  &kp LS(N5)  &kp LS(MINUS)  &kp RBKT  &kp NON_US_HASH  &mt RSHIFT TAB  &kp KP_DOT  &kp KP_NUMBER_0  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_MULTIPLY
-                    &kp LCTRL  &kp LALT  &kp LGUI  &lt FN LANG2  &mt LSHIFT SPACE  &none  &lt NAV_MAC BSPC  &kp LANG1  &kp KP_DIVIDE
+                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &none  &lt NAV_MAC BSPC  &lt VIAL_BT LANG1  &kp KP_DIVIDE
             >;
         };
 
@@ -335,19 +353,19 @@
             bindings = <
                     &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END  &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END
                     &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none  &kp C_MUTE  &none  &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none
-                    &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &kp LS(LG(Z))  &none  &none  &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &kp LS(LG(Z))
-                    &kp LCTRL  &kp LALT  &kp LGUI  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &none  &kp LANG1  &kp ESCAPE
+                    &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &kp LS(LG(Z))  &none  &mt RSHIFT TAB  &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &kp LS(LG(Z))
+                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &none  &lt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
             >;
         };
 
         automouse_layer { // Layer 4: AutoMouse
             display-name = "AutoMouse";
-            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
             bindings = <
                     &am_key_mac Q  &am_key_mac L  &am_key_mac U  &am_key_mac COMMA  &am_key_mac DOT  &am_key_mac F  &am_key_mac W  &am_key_mac R  &am_key_mac Y  &am_key_mac P
-                    &am_key_mac E  &am_key_mac I  &am_key_mac A  &mo SNIPE  &am_key_mac MINUS  &kp C_MUTE  &am_key_mac LS(N8)  &am_key_mac K  &mkp MB1  &mg N_PAN MB3  &mg R_MAC MB2  &am_key_mac H
-                    &am_key_mac J  &am_key_mac X  &am_key_mac C  &am_key_mac V  &am_key_mac QMARK  &am_key_mac TAB  &am_key_mac LS(N9)  &am_key_mac G  &mg D_MAC MB4  &mg M_MAC MB5  &am_key_mac Z  &am_key_mac B
-                    &am_key_mac LCTRL  &am_key_mac LALT  &am_key_mac LGUI  &am_lt_mac FN LANG2  &am_mt_mac LSHIFT SPACE  &am_lt_mac NUM ENTER  &am_lt_mac NAV_MAC BSPC  &am_key_mac LANG1  &am_lt_mac TB_SCROLL ESCAPE
+                    &am_key_mac E  &am_key_mac I  &am_key_mac A  &mo SNIPE  &am_key_mac MINUS  &kp C_MUTE  &none  &mkp MB4  &mkp MB1  &mg N_PAN MB3  &mg R_MAC MB2  &mkp MB5
+                    &am_key_mac J  &am_key_mac X  &am_key_mac C  &am_key_mac V  &am_key_mac QMARK  &am_ss_mac  &am_mt_mac RSHIFT TAB  &am_key_mac G  &mg D_MAC MB4  &mg M_MAC MB5  &am_key_mac Z  &am_key_mac B
+                    &am_key_mac LGUI  &am_key_mac LALT  &am_key_mac LCTRL  &am_lt_mac FN LANG2  &am_mt_mac LSHIFT SPACE  &am_lt_mac NUM ENTER  &am_lt_mac NAV_MAC BSPC  &am_lt_mac VIAL_BT LANG1  &am_lt_mac TB_SCROLL ESCAPE
             >;
         };
 
@@ -357,8 +375,8 @@
             bindings = <
                     &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END  &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END
                     &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none  &kp C_MUTE  &none  &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none
-                    &kp LC(Z)  &kp LC(X)  &kp LC(C)  &kp LC(V)  &kp LC(Y)  &none  &none  &kp LC(Z)  &kp LC(X)  &kp LC(C)  &kp LC(V)  &kp LC(Y)
-                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &none  &kp LANG1  &kp ESCAPE
+                    &kp LC(Z)  &kp LC(X)  &kp LC(C)  &kp LC(V)  &kp LC(Y)  &none  &mt RSHIFT TAB  &kp LC(Z)  &kp LC(X)  &kp LC(C)  &kp LC(V)  &kp LC(Y)
+                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &none  &lt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
             >;
         };
 
@@ -368,30 +386,30 @@
             bindings = <
                     &kp F1  &kp F2  &kp F3  &kp F4  &kp F5  &kp F1  &kp F2  &kp F3  &kp F4  &kp F5
                     &kp F6  &kp F7  &kp F8  &kp F9  &kp F10  &kp C_MUTE  &none  &kp F6  &kp F7  &kp F8  &kp F9  &kp F10
-                    &kp F11  &kp F12  &none  &none  &none  &none  &none  &kp F11  &kp F12  &none  &none  &none
-                    &kp LCTRL  &kp LALT  &kp LGUI  &none  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &mo SYS  &kp ESCAPE
+                    &kp F11  &kp F12  &none  &none  &none  &none  &mt RSHIFT TAB  &kp F11  &kp F12  &none  &none  &none
+                    &kp LGUI  &kp LALT  &kp LCTRL  &none  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &lt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
             >;
         };
 
-        system_layer { // Layer 7: System/BT
-            display-name = "System";
+        reserved_system_layer { // Layer 7: kept reserved so later internal layer numbers stay stable
+            display-name = "Reserved";
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
             bindings = <
-                    &bt0_mac  &bt1_mac  &bt2_win  &bt3_win  &bt4_win  &none  &none  &none  &none  &none
-                    &bt BT_PRV  &bt BT_NXT  &bt BT_CLR  &none  &none  &kp C_MUTE  &none  &none  &none  &none  &none  &none
-                    &bt BT_CLR_ALL  &none  &none  &none  &none  &none  &bootloader  &none  &none  &none  &none  &none
-                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                    &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                    &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                    &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                    &none  &none  &none  &none  &none  &none  &none  &none  &none
             >;
         };
 
         win_automouse_override_layer { // Layer 8: Windows AutoMouse override
             display-name = "WinAM";
-            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
             bindings = <
                     &am_key_win Q  &am_key_win L  &am_key_win U  &am_key_win COMMA  &am_key_win DOT  &am_key_win F  &am_key_win W  &am_key_win R  &am_key_win Y  &am_key_win P
-                    &am_key_win E  &am_key_win I  &am_key_win A  &trans  &am_key_win MINUS  &trans  &am_key_win LS(N8)  &am_key_win K  &trans  &mg N_PAN_WIN MB3  &mg R_WIN MB2  &am_key_win H
-                    &am_key_win J  &am_key_win X  &am_key_win C  &am_key_win V  &am_key_win QMARK  &am_key_win TAB  &am_key_win LS(N9)  &am_key_win G  &mg D_WIN MB4  &mg M_WIN MB5  &am_key_win Z  &am_key_win B
-                    &am_key_win LGUI  &am_key_win LALT  &am_key_win LCTRL  &am_lt_win FN LANG2  &am_mt_win LSHIFT SPACE  &am_lt_win NUM ENTER  &am_lt_win NAV_WIN BSPC  &am_key_win LANG1  &am_lt_win TB_SCROLL ESCAPE
+                    &am_key_win E  &am_key_win I  &am_key_win A  &trans  &am_key_win MINUS  &trans  &none  &trans  &trans  &mg N_PAN_WIN MB3  &mg R_WIN MB2  &trans
+                    &am_key_win J  &am_key_win X  &am_key_win C  &am_key_win V  &am_key_win QMARK  &am_ss_win  &am_mt_win RSHIFT TAB  &am_key_win G  &mg D_WIN MB4  &mg M_WIN MB5  &am_key_win Z  &am_key_win B
+                    &am_key_win LGUI  &am_key_win LALT  &am_key_win LCTRL  &am_lt_win FN LANG2  &am_mt_win LSHIFT SPACE  &am_lt_win NUM ENTER  &am_lt_win NAV_WIN BSPC  &am_lt_win VIAL_BT LANG1  &am_lt_win TB_SCROLL ESCAPE
             >;
         };
 
@@ -452,7 +470,7 @@
 
         win_num_override_layer { // Layer 14: Windows Num host override
             display-name = "WinNum";
-            sensor-bindings = <&rot_scroll SCRL_DOWN SCRL_UP &rot_scroll SCRL_DOWN SCRL_UP>;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
             bindings = <
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
                     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
@@ -516,14 +534,25 @@
             >;
         };
 
-        trackball_scroll_layer { // Layer 20: hold Esc for PMW3610 trackball scroll
-            display-name = "TB-Scroll";
-            sensor-bindings = <&rot_scroll SCRL_UP SCRL_DOWN &rot_scroll SCRL_UP SCRL_DOWN>;
+        vial_bluetooth_layer { // Layer 20: hold Kana for Vial-style Bluetooth profiles
+            display-name = "Bluetooth";
+            sensor-bindings = <&inc_dec_kp C_BRI_UP C_BRI_DN &inc_dec_kp C_BRI_UP C_BRI_DN>;
             bindings = <
-                    &none &none &none &none &none &none &none &none &none &none
-                    &none &none &none &none &none &none &none &none &none &none &none &none
-                    &none &none &none &none &none &none &none &none &none &none &none &none
-                    &none &none &none &none &none &none &none &none &none
+                    &none  &none  &none  &none  &bt0_mac  &none  &none  &none  &none  &none
+                    &none  &none  &bt BT_CLR  &none  &bt1_mac  &kp C_MUTE  &none  &none  &none  &none  &none  &none
+                    &none  &none  &none  &none  &bt2_win  &none  &mt RSHIFT TAB  &none  &none  &none  &none  &none
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &lt TB_SCROLL ESCAPE
+            >;
+        };
+
+        trackball_scroll_layer { // Layer 21: hold Esc for inverted vertical PMW3610 scroll
+            display-name = "TB-Scroll";
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
+            bindings = <
+                    &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                    &none  &none  &none  &none  &none  &kp C_MUTE  &none  &none  &none  &none  &none  &none
+                    &none  &none  &none  &none  &none  &none  &mt RSHIFT TAB  &none  &none  &none  &none  &none
+                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
             >;
         };
     };

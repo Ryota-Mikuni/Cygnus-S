@@ -1,0 +1,381 @@
+<div id="cygnus-vial-jis-v9">
+  <div class="viz-controls" role="group" aria-label="表示するレイヤー">
+    <button type="button" class="btn" data-layer="base" aria-pressed="true">L0 基本</button>
+    <button type="button" class="btn" data-layer="symbols" aria-pressed="false">L1 数字</button>
+    <button type="button" class="btn" data-layer="nav" aria-pressed="false">L2 移動</button>
+    <button type="button" class="btn" data-layer="fn" aria-pressed="false">L3 Fキー</button>
+    <button type="button" class="btn" data-layer="bt" aria-pressed="false">L4 BT</button>
+    <button type="button" class="btn" data-layer="automouse" aria-pressed="false">自動マウス</button>
+    <button type="button" class="btn" data-layer="scroll" aria-pressed="false">スクロール</button>
+  </div>
+
+  <div class="viz-row cy-layer-meta text-small" aria-live="polite">
+    <span id="cy-layer-entry"></span>
+    <span id="cy-encoder"></span>
+    <span id="cy-layer-source"></span>
+  </div>
+
+  <div class="cy-board cy-board-wide" id="cy-board-wide" role="group" aria-label="Cygnus 43ポジション キーマップ"></div>
+  <div class="cy-board cy-board-narrow" id="cy-board-narrow" role="group" aria-label="Cygnus 43ポジション キーマップ モバイル表示"></div>
+
+  <div class="card cy-selected" aria-live="polite">
+    <div class="viz-row">
+      <strong id="cy-selected-id"></strong>
+      <span id="cy-selected-tap"></span>
+      <span id="cy-selected-hold"></span>
+      <span id="cy-selected-code" class="text-small text-muted"></span>
+      <span id="cy-selected-note" class="text-small"></span>
+    </div>
+  </div>
+
+  <div class="viz-row cy-legend text-small text-muted" aria-label="凡例">
+    <span>上段＝タップ</span>
+    <span>下段＝長押し</span>
+    <span>L1主表示＝JIS英数の実出力</span>
+    <span>詳細の定義＝Vial/QMK raw</span>
+    <span>↔＝Cornixから位置を移動</span>
+    <span>ノブ押下＝Mute</span>
+    <span>サムクラスタ K37–K41＝全レイヤ共通（入口キーのみHELD）</span>
+    <span>Vial L5–L9＝未割当</span>
+  </div>
+</div>
+
+<style>
+  #cygnus-vial-jis-v9 {
+    width: 100%;
+    color: var(--foreground);
+  }
+
+  #cygnus-vial-jis-v9 .cy-layer-meta,
+  #cygnus-vial-jis-v9 .cy-legend {
+    margin-block: 0.75rem;
+  }
+
+  #cygnus-vial-jis-v9 .cy-board {
+    position: relative;
+    width: 100%;
+    margin-block: 0.75rem;
+  }
+
+  #cygnus-vial-jis-v9 .cy-board-wide {
+    aspect-ratio: 1300 / 500;
+  }
+
+  #cygnus-vial-jis-v9 .cy-board-narrow {
+    display: none;
+    aspect-ratio: 700 / 1000;
+  }
+
+  #cygnus-vial-jis-v9 .cy-key {
+    position: absolute;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+    transform-origin: center;
+    white-space: nowrap;
+  }
+
+  #cygnus-vial-jis-v9 .cy-key[data-empty="true"] {
+    opacity: 0.42;
+  }
+
+  #cygnus-vial-jis-v9 .cy-key-main,
+  #cygnus-vial-jis-v9 .cy-key-hold,
+  #cygnus-vial-jis-v9 .cy-key-id {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #cygnus-vial-jis-v9 .cy-key-main {
+    font-weight: 500;
+  }
+
+  #cygnus-vial-jis-v9 .cy-key-id,
+  #cygnus-vial-jis-v9 .cy-key-hold {
+    color: var(--muted-foreground);
+  }
+
+  #cygnus-vial-jis-v9 .cy-moved {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0.2rem;
+    color: var(--foreground);
+  }
+
+  #cygnus-vial-jis-v9 .cy-trackball {
+    position: absolute;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--muted) 72%, transparent);
+    color: var(--muted-foreground);
+  }
+
+  #cygnus-vial-jis-v9 .cy-selected {
+    margin-block-start: 0.75rem;
+  }
+
+  @media (max-width: 559px) {
+    #cygnus-vial-jis-v9 .cy-board-wide {
+      display: none;
+    }
+
+    #cygnus-vial-jis-v9 .cy-board-narrow {
+      display: block;
+    }
+
+    #cygnus-vial-jis-v9 .cy-key-id {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+(() => {
+  const root = document.getElementById("cygnus-vial-jis-v9");
+  const wideBoard = document.getElementById("cy-board-wide");
+  const narrowBoard = document.getElementById("cy-board-narrow");
+
+  const physical = [
+    [0,0,37,0],[1,100,12,0],[2,200,0,0],[3,300,12,0],[4,400,24,0],
+    [5,800,24,0],[6,900,12,0],[7,1000,0,0],[8,1100,12,0],[9,1200,37,0],
+    [10,0,137,0],[11,100,112,0],[12,200,100,0],[13,300,112,0],[14,400,124,0],[15,500,137,0],
+    [16,700,137,0],[17,800,124,0],[18,900,112,0],[19,1000,100,0],[20,1100,112,0],[21,1200,137,0],
+    [22,0,237,0],[23,100,212,0],[24,200,200,0],[25,300,212,0],[26,400,224,0],[27,500,237,0],
+    [28,700,237,0],[29,800,224,0],[30,900,212,0],[31,1000,200,0],[32,1100,212,0],[33,1200,237,0],
+    [34,0,337,0],[35,100,312,0],[36,200,300,0],[37,325,337,0],[38,437,350,10],[39,550,387,20],
+    [40,650,387,-20],[41,763,350,-10],[42,1200,337,0]
+  ];
+
+  const entry = (tap = "", hold = "", code = "", note = "", moved = false) => ({ tap, hold, code, note, moved });
+  const blank = () => Array.from({ length: 43 }, () => entry());
+  const assign = (layer, values) => {
+    Object.entries(values).forEach(([index, value]) => { layer[Number(index)] = value; });
+    return layer;
+  };
+
+  const base = assign(blank(), {
+    0:entry("Q"),1:entry("L"),2:entry("U"),3:entry(","),4:entry("."),
+    5:entry("F"),6:entry("W"),7:entry("R"),8:entry("Y"),9:entry("P"),
+    10:entry("E"),11:entry("I"),12:entry("A"),13:entry("O"),14:entry("-"),
+    15:entry("Mute","","C_MUTE","Cygnusのノブ押下。Cornix右ノブ押下を継承"),
+    17:entry("K"),18:entry("T"),19:entry("N","Pan","tap N / hold N_PAN","長押し＋トラックボールでパン"),20:entry("S","R操作","tap S / hold R gesture","長押し＋トラックボールで切替操作"),21:entry("H"),
+    22:entry("J"),23:entry("X"),24:entry("C"),25:entry("V"),26:entry("?","Shift→!","QUESTION_EXCLAIM","通常は?、Shift同時で!"),
+    27:entry("選択SS","","M0: Ctrl+Shift+Cmd+4","現VialのM0。範囲スクリーンショットをクリップボードへ",false),
+    28:entry("Tab","RShift","RSFT_T(TAB)","Cornixの右親指キーを、Cygnusの空いている右内側キーへ移動",true),
+    29:entry("G"),30:entry("D"),31:entry("M"),32:entry("Z"),33:entry("B"),
+    34:entry("Cmd","","LGUI","Cornixと同じ外側位置"),35:entry("Opt","","LALT"),36:entry("Ctrl","","LCTRL"),
+    37:entry("英数","Fn","LT3(LANG2)"),38:entry("Space","Shift","LSFT_T(SPACE)"),39:entry("Enter","記号","LT1(ENTER)"),
+    40:entry("Bksp","移動","LT2(BSPACE)"),41:entry("かな","BT","LT4(LANG1)"),
+    42:entry("Esc","Scroll","LT21(ESC)","長押し＋トラックボール。縦スクロールは従来と逆、横は現状維持")
+  });
+
+  const symbols = assign(blank(), {
+    1:entry("<","","LSFT(KC_COMMA)","JIS: JP_LABK"),2:entry(">","","LSFT(KC_DOT)","JIS: JP_RABK"),3:entry(",","","KC_COMMA","JIS: JP_COMM。Cornix外側1列を除く位置対応で再照合"),4:entry(".","","KC_DOT","JIS: JP_DOT。Cornix外側1列を除く位置対応で再照合"),
+    5:entry("・","","KC_SLSH","7の左隣"),6:entry("7","","KC_P7","右へ1列移動"),7:entry("8","","KC_P8","右へ1列移動"),8:entry("9","","KC_P9","右へ1列移動"),9:entry("+","","KC_PPLS","右端列1段目。Vial上段の +"),
+    11:entry("&","","LSFT(KC_6)","JIS: JP_AMPR"),12:entry("@","","KC_LBRACKET","JIS: JP_AT"),13:entry("(","","LSFT(KC_8)","JIS: JP_LPRN"),14:entry(")","","LSFT(KC_9)","JIS: JP_RPRN"),15:entry("Mute","","C_MUTE"),
+    17:entry(":","","KC_QUOTE","JIS: JP_COLN。Cornix右中段の先頭キーをK17へ移植"),18:entry("4","","KC_P4","右へ1列移動"),19:entry("5","","KC_P5","右へ1列移動"),20:entry("6","","KC_P6","右へ1列移動"),21:entry("−","","KC_PMNS","右端列2段目。Vial中段の -"),
+    23:entry("%","","LSFT(KC_5)","JIS: JP_PERC"),24:entry("=","","LSFT(KC_MINUS)","JIS: JP_EQL"),25:entry("[","","KC_RBRACKET","JIS: JP_LBRC"),26:entry("]","","KC_NONUS_HASH","JIS: JP_RBRC"),27:entry("Tab","RShift","RSFT_T(TAB)"),
+    28:entry(".","","KC_PDOT","小数点"),29:entry("0","","KC_P0","旧1の位置"),30:entry("1","","KC_P1","右へ1列移動"),31:entry("2","","KC_P2","右へ1列移動"),32:entry("3","","KC_P3","右へ1列移動"),33:entry("×","","KC_PAST","右端列3段目。Vial下段の *"),
+    34:entry("Cmd"),35:entry("Opt"),36:entry("Ctrl"),37:entry("英数","Fn"),38:entry("Space","Shift"),39:entry("Enter","HELD","L1 held"),
+    40:entry("Bksp","移動"),41:entry("かな","BT"),42:entry("÷","","KC_PSLS","右端列4段目。Vial親指側の /")
+  });
+
+  const nav = assign(blank(), {
+    0:entry("Home"),1:entry("PgUp"),2:entry("↑"),3:entry("PgDn"),4:entry("End"),
+    5:entry("Home"),6:entry("PgUp"),7:entry("↑"),8:entry("PgDn"),9:entry("End"),
+    11:entry("←"),12:entry("↓"),13:entry("→"),15:entry("Mute"),
+    18:entry("←"),19:entry("↓"),20:entry("→"),
+    22:entry("Undo","","Cmd+Z"),23:entry("Cut","","Cmd+X"),24:entry("Copy","","Cmd+C"),25:entry("Paste","","Cmd+V"),26:entry("Redo","","Shift+Cmd+Z"),
+    28:entry("Tab","RShift","RSFT_T(TAB)","Baseと同じ移動キー",true),29:entry("Undo","","Cmd+Z"),30:entry("Cut","","Cmd+X"),31:entry("Copy","","Cmd+C"),32:entry("Paste","","Cmd+V"),33:entry("Redo","","Shift+Cmd+Z"),
+    34:entry("Cmd"),35:entry("Opt"),36:entry("Ctrl"),37:entry("英数","Fn"),38:entry("Space","Shift"),39:entry("Enter","記号"),
+    40:entry("Bksp","HELD","L2 held"),41:entry("かな","BT"),42:entry("Esc","Scroll")
+  });
+
+  const fn = assign(blank(), {
+    0:entry("F1"),1:entry("F2"),2:entry("F3"),3:entry("F4"),4:entry("F5"),
+    5:entry("F1"),6:entry("F2"),7:entry("F3"),8:entry("F4"),9:entry("F5"),
+    10:entry("F6"),11:entry("F7"),12:entry("F8"),13:entry("F9"),14:entry("F10"),15:entry("Mute"),
+    17:entry("F6"),18:entry("F7"),19:entry("F8"),20:entry("F9"),21:entry("F10"),
+    22:entry("F11"),23:entry("F12"),28:entry("Tab","RShift","RSFT_T(TAB)","Baseと同じ移動キー",true),29:entry("F11"),30:entry("F12"),
+    34:entry("Cmd"),35:entry("Opt"),36:entry("Ctrl"),37:entry("英数","HELD","L3 held"),38:entry("Space","Shift"),39:entry("Enter","記号"),
+    40:entry("Bksp","移動"),41:entry("かな","BT"),42:entry("Esc","Scroll")
+  });
+
+  const bt = assign(blank(), {
+    4:entry("BT0","","BT_SEL 0"),12:entry("BT消去","","BT_CLR","選択中のプロファイル1件だけ消去"),14:entry("BT1","","BT_SEL 1"),15:entry("Mute"),26:entry("BT2","","BT_SEL 2"),
+    28:entry("Tab","RShift","RSFT_T(TAB)","Baseと同じ移動キー",true),
+    34:entry("Cmd"),35:entry("Opt"),36:entry("Ctrl"),37:entry("英数","Fn"),38:entry("Space","Shift"),39:entry("Enter","記号"),
+    40:entry("Bksp","移動"),41:entry("かな","HELD","L4 held"),42:entry("Esc","Scroll")
+  });
+
+  const automouse = base.map(value => ({ ...value, note: value.tap ? "入力後は基本レイヤーへ戻る" : value.note }));
+  assign(automouse, {
+    13:entry("低速","hold","O位置","押している間だけトラックボールを低速化"),
+    17:entry("戻る","","Mouse Button 4"),18:entry("左Click","","Mouse Button 1"),19:entry("中Click","Pan","Mouse Button 3"),
+    20:entry("右Click","R操作","tap MB2 / hold R gesture","長押し＋トラックボールで切替操作"),21:entry("進む","","Mouse Button 5"),
+    30:entry("D操作","Copy系","tap MB4 / hold D gesture"),31:entry("M操作","Tab系","tap MB5 / hold M gesture"),
+    42:entry("Esc","Scroll","LT21(ESC)","縦スクロールは従来と逆、横は現状維持")
+  });
+
+  const scroll = assign(blank(), {
+    15:entry("Mute","","C_MUTE"),28:entry("Tab","RShift","RSFT_T(TAB)","Baseから透過",true),
+    34:entry("Cmd"),35:entry("Opt"),36:entry("Ctrl"),37:entry("英数","Fn"),38:entry("Space","Shift"),39:entry("Enter","記号"),40:entry("Bksp","移動"),41:entry("かな","BT"),
+    42:entry("Esc","HELD","L21 held","Esc長押し＋トラックボール。縦スクロールは従来と逆、横は現状維持")
+  });
+
+  const layers = {
+    base:{ name:"基本", entry:"入口: 通常", encoder:"ノブ: 回転=音量 / 押下=Mute", source:"Vial L0をCygnusへ移植", keys:base, selected:28 },
+    symbols:{ name:"数字", entry:"入口: Enter長押し", encoder:"ノブ: 音量", source:"Vial L1の物理順を維持 + JIS英数出力 + 合意済みテンキー", keys:symbols, selected:17 },
+    nav:{ name:"移動・編集", entry:"入口: Backspace長押し", encoder:"ノブ: 横スクロール", source:"Vial L2をCygnusへ移植", keys:nav, selected:40 },
+    fn:{ name:"Fキー", entry:"入口: 英数長押し", encoder:"ノブ: 画面輝度", source:"Vial L3をCygnusへ移植", keys:fn, selected:37 },
+    bt:{ name:"Bluetooth", entry:"入口: かな長押し", encoder:"ノブ: 画面輝度", source:"Vial L4配置 + A位置に選択中BT消去", keys:bt, selected:41 },
+    automouse:{ name:"自動マウス", entry:"入口: トラックボール移動で自動", encoder:"ノブ: 音量", source:"Cygnus固有（Vial外）", keys:automouse, selected:19 },
+    scroll:{ name:"スクロール（上下反転）", entry:"入口: Esc長押し", encoder:"ノブ: 音量", source:"縦は従来と逆 / 横は現状維持", keys:scroll, selected:42 }
+  };
+
+  let activeLayer = "base";
+  let selectedKey = layers[activeLayer].selected;
+
+  function keyLabel(index, value) {
+    const parts = [`K${String(index).padStart(2, "0")}`];
+    parts.push(value.tap || "未割当");
+    if (value.hold) parts.push(`長押し ${value.hold}`);
+    if (value.moved) parts.push("Cornixから位置移動");
+    return parts.join("、");
+  }
+
+  function makeKey(index, x, y, rotation, mode) {
+    const value = layers[activeLayer].keys[index];
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn viz-tile cy-key";
+    button.dataset.key = String(index);
+    button.dataset.empty = value.tap ? "false" : "true";
+    button.setAttribute("aria-pressed", String(index === selectedKey));
+    button.setAttribute("aria-label", keyLabel(index, value));
+    button.setAttribute("data-tooltip", keyLabel(index, value));
+
+    let px = x;
+    let py = y;
+    let boardWidth = 1300;
+    let boardHeight = 500;
+    let renderedKeySize = 100;
+    if (mode === "narrow") {
+      boardWidth = 700;
+      boardHeight = 1000;
+      renderedKeySize = 90;
+      if (x >= 650) {
+        px = x - 625;
+        py = y + 500;
+      } else {
+        px = x + 25;
+      }
+    }
+
+    button.style.left = `${(px / boardWidth) * 100}%`;
+    button.style.top = `${(py / boardHeight) * 100}%`;
+    button.style.width = `${(renderedKeySize / boardWidth) * 100}%`;
+    button.style.height = `${(renderedKeySize / boardHeight) * 100}%`;
+    button.style.transform = `rotate(${rotation}deg)`;
+
+    const id = document.createElement("span");
+    id.className = "cy-key-id text-small";
+    id.textContent = `K${String(index).padStart(2, "0")}`;
+    const main = document.createElement("span");
+    main.className = "cy-key-main";
+    main.textContent = value.tap || "—";
+    const hold = document.createElement("span");
+    hold.className = "cy-key-hold text-small";
+    hold.textContent = value.hold ? `↳${value.hold}` : "";
+    button.append(id, main, hold);
+
+    if (value.moved) {
+      const moved = document.createElement("span");
+      moved.className = "cy-moved text-small";
+      moved.textContent = "↔";
+      button.append(moved);
+    }
+
+    button.addEventListener("click", () => {
+      selectedKey = index;
+      updateSelection();
+    });
+    return button;
+  }
+
+  function addTrackball(board, mode) {
+    const ball = document.createElement("div");
+    ball.className = "cy-trackball text-small";
+    ball.setAttribute("role", "img");
+    const active = activeLayer === "automouse" ? "ポインター" : activeLayer === "scroll" ? "Scroll" : "Trackball";
+    ball.setAttribute("aria-label", `トラックボール: ${active}`);
+    ball.textContent = active;
+    if (mode === "wide") {
+      ball.style.left = "82.3%";
+      ball.style.top = "68%";
+      ball.style.width = "10%";
+      ball.style.aspectRatio = "1";
+    } else {
+      ball.style.left = "50%";
+      ball.style.top = "84%";
+      ball.style.width = "18%";
+      ball.style.aspectRatio = "1";
+    }
+    board.append(ball);
+  }
+
+  function renderBoard(board, mode) {
+    board.replaceChildren();
+    physical.forEach(([index, x, y, rotation]) => board.append(makeKey(index, x, y, rotation, mode)));
+    addTrackball(board, mode);
+  }
+
+  function updateDetail() {
+    const value = layers[activeLayer].keys[selectedKey];
+    document.getElementById("cy-selected-id").textContent = `K${String(selectedKey).padStart(2, "0")}`;
+    document.getElementById("cy-selected-tap").textContent = `タップ: ${value.tap || "未割当"}`;
+    document.getElementById("cy-selected-hold").textContent = `長押し: ${value.hold || "なし"}`;
+    document.getElementById("cy-selected-code").textContent = value.code ? `定義: ${value.code}` : "";
+    document.getElementById("cy-selected-note").textContent = value.note || "";
+  }
+
+  function updateSelection() {
+    root.querySelectorAll(".cy-key").forEach(button => {
+      button.setAttribute("aria-pressed", String(Number(button.dataset.key) === selectedKey));
+    });
+    updateDetail();
+  }
+
+  function render() {
+    const layer = layers[activeLayer];
+    document.getElementById("cy-layer-entry").textContent = layer.entry;
+    document.getElementById("cy-encoder").textContent = layer.encoder;
+    document.getElementById("cy-layer-source").textContent = layer.source;
+    root.querySelectorAll("[data-layer]").forEach(button => {
+      button.setAttribute("aria-pressed", String(button.dataset.layer === activeLayer));
+    });
+    renderBoard(wideBoard, "wide");
+    renderBoard(narrowBoard, "narrow");
+    updateDetail();
+  }
+
+  root.querySelectorAll("[data-layer]").forEach(button => {
+    button.addEventListener("click", () => {
+      activeLayer = button.dataset.layer;
+      selectedKey = layers[activeLayer].selected;
+      render();
+    });
+  });
+
+  render();
+})();
+</script>

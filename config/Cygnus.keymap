@@ -1,5 +1,5 @@
 // Cygnus-S keymap
-// v9: Vial-aligned daily layout + host-aware AutoMouse gesture layers.
+// v10: Vial-aligned daily layout + reliable Kana/BT hold-tap.
 // - BT0/BT1: Mac host profile.
 // - BT2: Windows host profile via overlay layer.
 // - Encoder is volume on Base/Num/AutoMouse, horizontal scroll on Nav, and brightness on Fn/BT.
@@ -8,6 +8,7 @@
 // - AutoMouse is mouse/gesture mode; unassigned keys fall through as base text and return to text.
 // - N/right-click/D/M positions use hold-tap for gesture families on Base and AutoMouse.
 // - Hold Esc for trackball scroll; vertical trackball scroll is inverted in Cygnus_R.conf.
+// - Kana always taps LANG1 when released alone; hold past 220 ms and press another key for BT.
 
 // Match the original Cygnus-S encoder scroll strength; ZMK's default is too small on macOS.
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 120
@@ -110,6 +111,39 @@
             #binding-cells = <0>;
             bindings = <&kp QMARK>, <&kp EXCL>;
             mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        kana_bt: kana_bluetooth_layer_tap {
+            compatible = "zmk,behavior-hold-tap";
+            label = "KANA_BLUETOOTH_LAYER_TAP";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <220>;
+            quick-tap-ms = <0>;
+            retro-tap;
+            bindings = <&mo>, <&kp>;
+        };
+
+        am_kana_bt_mac: automouse_kana_bluetooth_mac {
+            compatible = "zmk,behavior-hold-tap";
+            label = "AUTOMOUSE_KANA_BLUETOOTH_MAC";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <220>;
+            quick-tap-ms = <0>;
+            retro-tap;
+            bindings = <&mo>, <&text_return_mac>;
+        };
+
+        am_kana_bt_win: automouse_kana_bluetooth_win {
+            compatible = "zmk,behavior-hold-tap";
+            label = "AUTOMOUSE_KANA_BLUETOOTH_WIN";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <220>;
+            quick-tap-ms = <0>;
+            retro-tap;
+            bindings = <&mo>, <&text_return_win>;
         };
     };
 
@@ -321,7 +355,7 @@
                     &kp Q  &kp L  &kp U  &kp COMMA  &kp DOT  &kp F  &kp W  &kp R  &kp Y  &kp P
                     &kp E  &kp I  &kp A  &kp O  &kp MINUS  &kp C_MUTE  &none  &kp K  &kp T  &kg N_PAN N  &kg R_MAC S  &kp H
                     &kp J  &kp X  &kp C  &kp V  &qex  &ss_mac  &mt RSHIFT TAB  &kp G  &kg D_MAC D  &kg M_MAC M  &kp Z  &kp B
-                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &lt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
+                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &kana_bt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
             >;
         };
 
@@ -343,7 +377,7 @@
                     &none  &kp LS(COMMA)  &kp LS(DOT)  &kp COMMA  &kp DOT  &kp SLASH  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_PLUS
                     &none  &kp LS(N6)  &kp LBKT  &kp LS(N8)  &kp LS(N9)  &kp C_MUTE  &none  &kp SQT  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MINUS
                     &none  &kp LS(N5)  &kp LS(MINUS)  &kp RBKT  &kp NON_US_HASH  &mt RSHIFT TAB  &kp KP_DOT  &kp KP_NUMBER_0  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_MULTIPLY
-                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &none  &lt NAV_MAC BSPC  &lt VIAL_BT LANG1  &kp KP_DIVIDE
+                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &none  &lt NAV_MAC BSPC  &kana_bt VIAL_BT LANG1  &kp KP_DIVIDE
             >;
         };
 
@@ -354,7 +388,7 @@
                     &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END  &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END
                     &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none  &kp C_MUTE  &none  &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none
                     &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &kp LS(LG(Z))  &none  &mt RSHIFT TAB  &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &kp LS(LG(Z))
-                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &none  &lt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
+                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &none  &kana_bt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
             >;
         };
 
@@ -365,7 +399,7 @@
                     &am_key_mac Q  &am_key_mac L  &am_key_mac U  &am_key_mac COMMA  &am_key_mac DOT  &am_key_mac F  &am_key_mac W  &am_key_mac R  &am_key_mac Y  &am_key_mac P
                     &am_key_mac E  &am_key_mac I  &am_key_mac A  &mo SNIPE  &am_key_mac MINUS  &kp C_MUTE  &none  &mkp MB4  &mkp MB1  &mg N_PAN MB3  &mg R_MAC MB2  &mkp MB5
                     &am_key_mac J  &am_key_mac X  &am_key_mac C  &am_key_mac V  &am_key_mac QMARK  &am_ss_mac  &am_mt_mac RSHIFT TAB  &am_key_mac G  &mg D_MAC MB4  &mg M_MAC MB5  &am_key_mac Z  &am_key_mac B
-                    &am_key_mac LGUI  &am_key_mac LALT  &am_key_mac LCTRL  &am_lt_mac FN LANG2  &am_mt_mac LSHIFT SPACE  &am_lt_mac NUM ENTER  &am_lt_mac NAV_MAC BSPC  &am_lt_mac VIAL_BT LANG1  &am_lt_mac TB_SCROLL ESCAPE
+                    &am_key_mac LGUI  &am_key_mac LALT  &am_key_mac LCTRL  &am_lt_mac FN LANG2  &am_mt_mac LSHIFT SPACE  &am_lt_mac NUM ENTER  &am_lt_mac NAV_MAC BSPC  &am_kana_bt_mac VIAL_BT 0  &am_lt_mac TB_SCROLL ESCAPE
             >;
         };
 
@@ -376,7 +410,7 @@
                     &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END  &kp HOME  &kp PG_UP  &kp UP_ARROW  &kp PG_DN  &kp END
                     &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none  &kp C_MUTE  &none  &none  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &none
                     &kp LC(Z)  &kp LC(X)  &kp LC(C)  &kp LC(V)  &kp LC(Y)  &none  &mt RSHIFT TAB  &kp LC(Z)  &kp LC(X)  &kp LC(C)  &kp LC(V)  &kp LC(Y)
-                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &none  &lt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
+                    &kp LGUI  &kp LALT  &kp LCTRL  &lt FN LANG2  &mt LSHIFT SPACE  &lt NUM ENTER  &none  &kana_bt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
             >;
         };
 
@@ -387,7 +421,7 @@
                     &kp F1  &kp F2  &kp F3  &kp F4  &kp F5  &kp F1  &kp F2  &kp F3  &kp F4  &kp F5
                     &kp F6  &kp F7  &kp F8  &kp F9  &kp F10  &kp C_MUTE  &none  &kp F6  &kp F7  &kp F8  &kp F9  &kp F10
                     &kp F11  &kp F12  &none  &none  &none  &none  &mt RSHIFT TAB  &kp F11  &kp F12  &none  &none  &none
-                    &kp LGUI  &kp LALT  &kp LCTRL  &none  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &lt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
+                    &kp LGUI  &kp LALT  &kp LCTRL  &none  &mt LSHIFT SPACE  &lt NUM ENTER  &lt NAV_MAC BSPC  &kana_bt VIAL_BT LANG1  &lt TB_SCROLL ESCAPE
             >;
         };
 
@@ -409,7 +443,7 @@
                     &am_key_win Q  &am_key_win L  &am_key_win U  &am_key_win COMMA  &am_key_win DOT  &am_key_win F  &am_key_win W  &am_key_win R  &am_key_win Y  &am_key_win P
                     &am_key_win E  &am_key_win I  &am_key_win A  &trans  &am_key_win MINUS  &trans  &none  &trans  &trans  &mg N_PAN_WIN MB3  &mg R_WIN MB2  &trans
                     &am_key_win J  &am_key_win X  &am_key_win C  &am_key_win V  &am_key_win QMARK  &am_ss_win  &am_mt_win RSHIFT TAB  &am_key_win G  &mg D_WIN MB4  &mg M_WIN MB5  &am_key_win Z  &am_key_win B
-                    &am_key_win LGUI  &am_key_win LALT  &am_key_win LCTRL  &am_lt_win FN LANG2  &am_mt_win LSHIFT SPACE  &am_lt_win NUM ENTER  &am_lt_win NAV_WIN BSPC  &am_lt_win VIAL_BT LANG1  &am_lt_win TB_SCROLL ESCAPE
+                    &am_key_win LGUI  &am_key_win LALT  &am_key_win LCTRL  &am_lt_win FN LANG2  &am_mt_win LSHIFT SPACE  &am_lt_win NUM ENTER  &am_lt_win NAV_WIN BSPC  &am_kana_bt_win VIAL_BT 0  &am_lt_win TB_SCROLL ESCAPE
             >;
         };
 

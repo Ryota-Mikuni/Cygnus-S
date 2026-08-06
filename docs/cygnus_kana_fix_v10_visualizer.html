@@ -1,4 +1,4 @@
-<div id="cygnus-vial-jis-v9">
+<div id="cygnus-kana-fix-v10">
   <div class="viz-controls" role="group" aria-label="表示するレイヤー">
     <button type="button" class="btn" data-layer="base" aria-pressed="true">L0 基本</button>
     <button type="button" class="btn" data-layer="symbols" aria-pressed="false">L1 数字</button>
@@ -10,21 +10,21 @@
   </div>
 
   <div class="viz-row cy-layer-meta text-small" aria-live="polite">
-    <span id="cy-layer-entry"></span>
-    <span id="cy-encoder"></span>
-    <span id="cy-layer-source"></span>
+    <span id="cy-v10-layer-entry"></span>
+    <span id="cy-v10-encoder"></span>
+    <span id="cy-v10-layer-source"></span>
   </div>
 
-  <div class="cy-board cy-board-wide" id="cy-board-wide" role="group" aria-label="Cygnus 43ポジション キーマップ"></div>
-  <div class="cy-board cy-board-narrow" id="cy-board-narrow" role="group" aria-label="Cygnus 43ポジション キーマップ モバイル表示"></div>
+  <div class="cy-board cy-board-wide" id="cy-v10-board-wide" role="group" aria-label="Cygnus 43ポジション キーマップ"></div>
+  <div class="cy-board cy-board-narrow" id="cy-v10-board-narrow" role="group" aria-label="Cygnus 43ポジション キーマップ モバイル表示"></div>
 
   <div class="card cy-selected" aria-live="polite">
     <div class="viz-row">
-      <strong id="cy-selected-id"></strong>
-      <span id="cy-selected-tap"></span>
-      <span id="cy-selected-hold"></span>
-      <span id="cy-selected-code" class="text-small text-muted"></span>
-      <span id="cy-selected-note" class="text-small"></span>
+      <strong id="cy-v10-selected-id"></strong>
+      <span id="cy-v10-selected-tap"></span>
+      <span id="cy-v10-selected-hold"></span>
+      <span id="cy-v10-selected-code" class="text-small text-muted"></span>
+      <span id="cy-v10-selected-note" class="text-small"></span>
     </div>
   </div>
 
@@ -41,32 +41,32 @@
 </div>
 
 <style>
-  #cygnus-vial-jis-v9 {
+  #cygnus-kana-fix-v10 {
     width: 100%;
     color: var(--foreground);
   }
 
-  #cygnus-vial-jis-v9 .cy-layer-meta,
-  #cygnus-vial-jis-v9 .cy-legend {
+  #cygnus-kana-fix-v10 .cy-layer-meta,
+  #cygnus-kana-fix-v10 .cy-legend {
     margin-block: 0.75rem;
   }
 
-  #cygnus-vial-jis-v9 .cy-board {
+  #cygnus-kana-fix-v10 .cy-board {
     position: relative;
     width: 100%;
     margin-block: 0.75rem;
   }
 
-  #cygnus-vial-jis-v9 .cy-board-wide {
+  #cygnus-kana-fix-v10 .cy-board-wide {
     aspect-ratio: 1300 / 500;
   }
 
-  #cygnus-vial-jis-v9 .cy-board-narrow {
+  #cygnus-kana-fix-v10 .cy-board-narrow {
     display: none;
     aspect-ratio: 700 / 1000;
   }
 
-  #cygnus-vial-jis-v9 .cy-key {
+  #cygnus-kana-fix-v10 .cy-key {
     position: absolute;
     box-sizing: border-box;
     display: flex;
@@ -79,36 +79,36 @@
     white-space: nowrap;
   }
 
-  #cygnus-vial-jis-v9 .cy-key[data-empty="true"] {
+  #cygnus-kana-fix-v10 .cy-key[data-empty="true"] {
     opacity: 0.42;
   }
 
-  #cygnus-vial-jis-v9 .cy-key-main,
-  #cygnus-vial-jis-v9 .cy-key-hold,
-  #cygnus-vial-jis-v9 .cy-key-id {
+  #cygnus-kana-fix-v10 .cy-key-main,
+  #cygnus-kana-fix-v10 .cy-key-hold,
+  #cygnus-kana-fix-v10 .cy-key-id {
     display: block;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  #cygnus-vial-jis-v9 .cy-key-main {
+  #cygnus-kana-fix-v10 .cy-key-main {
     font-weight: 500;
   }
 
-  #cygnus-vial-jis-v9 .cy-key-id,
-  #cygnus-vial-jis-v9 .cy-key-hold {
+  #cygnus-kana-fix-v10 .cy-key-id,
+  #cygnus-kana-fix-v10 .cy-key-hold {
     color: var(--muted-foreground);
   }
 
-  #cygnus-vial-jis-v9 .cy-moved {
+  #cygnus-kana-fix-v10 .cy-moved {
     position: absolute;
     inset-block-start: 0;
     inset-inline-end: 0.2rem;
     color: var(--foreground);
   }
 
-  #cygnus-vial-jis-v9 .cy-trackball {
+  #cygnus-kana-fix-v10 .cy-trackball {
     position: absolute;
     box-sizing: border-box;
     display: grid;
@@ -119,20 +119,20 @@
     color: var(--muted-foreground);
   }
 
-  #cygnus-vial-jis-v9 .cy-selected {
+  #cygnus-kana-fix-v10 .cy-selected {
     margin-block-start: 0.75rem;
   }
 
   @media (max-width: 559px) {
-    #cygnus-vial-jis-v9 .cy-board-wide {
+    #cygnus-kana-fix-v10 .cy-board-wide {
       display: none;
     }
 
-    #cygnus-vial-jis-v9 .cy-board-narrow {
+    #cygnus-kana-fix-v10 .cy-board-narrow {
       display: block;
     }
 
-    #cygnus-vial-jis-v9 .cy-key-id {
+    #cygnus-kana-fix-v10 .cy-key-id {
       display: none;
     }
   }
@@ -140,9 +140,9 @@
 
 <script>
 (() => {
-  const root = document.getElementById("cygnus-vial-jis-v9");
-  const wideBoard = document.getElementById("cy-board-wide");
-  const narrowBoard = document.getElementById("cy-board-narrow");
+  const root = document.getElementById("cygnus-kana-fix-v10");
+  const wideBoard = document.getElementById("cy-v10-board-wide");
+  const narrowBoard = document.getElementById("cy-v10-board-narrow");
 
   const physical = [
     [0,0,37,0],[1,100,12,0],[2,200,0,0],[3,300,12,0],[4,400,24,0],
@@ -342,11 +342,11 @@
 
   function updateDetail() {
     const value = layers[activeLayer].keys[selectedKey];
-    document.getElementById("cy-selected-id").textContent = `K${String(selectedKey).padStart(2, "0")}`;
-    document.getElementById("cy-selected-tap").textContent = `タップ: ${value.tap || "未割当"}`;
-    document.getElementById("cy-selected-hold").textContent = `長押し: ${value.hold || "なし"}`;
-    document.getElementById("cy-selected-code").textContent = value.code ? `定義: ${value.code}` : "";
-    document.getElementById("cy-selected-note").textContent = value.note || "";
+    document.getElementById("cy-v10-selected-id").textContent = `K${String(selectedKey).padStart(2, "0")}`;
+    document.getElementById("cy-v10-selected-tap").textContent = `タップ: ${value.tap || "未割当"}`;
+    document.getElementById("cy-v10-selected-hold").textContent = `長押し: ${value.hold || "なし"}`;
+    document.getElementById("cy-v10-selected-code").textContent = value.code ? `定義: ${value.code}` : "";
+    document.getElementById("cy-v10-selected-note").textContent = value.note || "";
   }
 
   function updateSelection() {
@@ -358,9 +358,9 @@
 
   function render() {
     const layer = layers[activeLayer];
-    document.getElementById("cy-layer-entry").textContent = layer.entry;
-    document.getElementById("cy-encoder").textContent = layer.encoder;
-    document.getElementById("cy-layer-source").textContent = layer.source;
+    document.getElementById("cy-v10-layer-entry").textContent = layer.entry;
+    document.getElementById("cy-v10-encoder").textContent = layer.encoder;
+    document.getElementById("cy-v10-layer-source").textContent = layer.source;
     root.querySelectorAll("[data-layer]").forEach(button => {
       button.setAttribute("aria-pressed", String(button.dataset.layer === activeLayer));
     });
